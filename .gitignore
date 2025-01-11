@@ -1,0 +1,40 @@
+# Node.js dependencies
+frontend/stock-portfolio-frontend/node_modules/
+
+# Python virtual environment
+venv/
+**/__pycache__/
+*.py[cod]
+
+# IDE settings
+.idea/
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# Environment variables
+*.env
+
+# Build directories
+frontend/stock-portfolio-frontend/public/
+frontend/stock-portfolio-frontend/dist/
+frontend/stock-portfolio-frontend/build/
+
+# Other temporary files
+*.swp
+*.tmp
+*.bak
+*.old
+
+# Python cache and compiled files
+**/.mypy_cache/
+**/.pytest_cache/
+*.pyo
