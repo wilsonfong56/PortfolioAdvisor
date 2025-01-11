@@ -1,5 +1,5 @@
 # Node.js dependencies
-frontend/stock-portfolio-frontend/node_modules/
+node_modules/
 
 # Python virtual environment
 venv/
