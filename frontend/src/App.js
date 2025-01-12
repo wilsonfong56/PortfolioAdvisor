@@ -4,10 +4,7 @@ import ChatInterface from "./components/ChatInterface";
 import './index.css';
 
 function App() {
-    const [portfolio, setPortfolio] = useState([
-        { symbol: 'AAPL', shares: '10', price: '180.50' },
-        { symbol: 'GOOGL', shares: '5', price: '140.25' }
-    ]);
+    const [portfolio, setPortfolio] = useState([]);
 
   return (
       <div className="max-w-6xl mx-auto p-6">

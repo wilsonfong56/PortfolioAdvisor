@@ -1,8 +1,15 @@
-import React, { useState } from "react";
-import { addStock, deleteStock } from "../api";
+import React, { useState, useEffect } from "react";
+import { addStock, deleteStock, fetchPortfolio } from "../api";
 
 const Portfolio = ({ portfolio, setPortfolio }) => {
     const [stock, setStock] = useState({symbol: '', shares: '', price: ''});
+
+    // Fetch portfolio on component mount
+    useEffect(() => {
+        fetchPortfolio()
+            .then((res) => setPortfolio(res.data.portfolio))
+            .catch((err) => console.error(err));
+    }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;

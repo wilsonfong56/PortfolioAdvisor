@@ -5,7 +5,10 @@ app = Flask(__name__)
 CORS(app)
 
 # In memory portfolio for testing
-portfolio = []
+portfolio = [
+    { "symbol": 'AAPL', "shares": '10', "price": '180.50' },
+    { "symbol": 'GOOGL', "shares": '5', "price": '140.25' }
+]
 
 @app.route('/')
 def home():
@@ -34,8 +37,9 @@ def get_portfolio():
 
 @app.route('/portfolio/<string:symbol>', methods=['DELETE'])
 def delete_stock(symbol):
-    global portfolio
-    portfolio = [stock for stock in portfolio if stock["symbol"] != symbol]
+    for item in portfolio:
+        if item['symbol'] == symbol:
+            portfolio.remove(item)
     return jsonify({"message": "Stock deleted successfully", "portfolio": portfolio})
 
 if __name__ ==  '__main__':
