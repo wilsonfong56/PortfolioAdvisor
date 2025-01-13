@@ -1,15 +1,37 @@
 import React, { useState, useEffect } from "react";
 import { addStock, deleteStock, fetchPortfolio } from "../api";
+import { get_quote } from "../utils";
 
 const Portfolio = ({ portfolio, setPortfolio }) => {
     const [stock, setStock] = useState({symbol: '', shares: '', price: ''});
+    const [gainPercentages, setGainPercentages] = useState({});
 
     // Fetch portfolio on component mount
     useEffect(() => {
         fetchPortfolio()
             .then((res) => setPortfolio(res.data.portfolio))
             .catch((err) => console.error(err));
-    }, []);
+    }, [setPortfolio]);
+
+    useEffect(() => {
+        const fetchGains = async () => {
+            const newGainPercentages = {};
+            for (const stock of portfolio) {
+                try {
+                    const currentPrice = await get_quote(stock.symbol.toUpperCase());
+                    const gain = (parseFloat(currentPrice) - parseFloat(stock.price)) / parseFloat(stock.price);
+                    newGainPercentages[stock.symbol] = gain;
+                } catch (error) {
+                    console.error(`Error fetching quote for ${stock.symbol}:`, error);
+                    newGainPercentages[stock.symbol] = null;
+                }
+            }
+            setGainPercentages(newGainPercentages);
+        };
+
+        fetchGains();
+    }, [portfolio]); // Update gain percentages when portfolio changes
+
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -101,8 +123,18 @@ const Portfolio = ({ portfolio, setPortfolio }) => {
                                             {stock.shares} shares @ ${parseFloat(stock.price).toFixed(2)}
                                         </p>
                                         <p className="text-sm font-medium">
-                                            Total: ${calculateTotal(stock)}
+                                            Cost Basis: ${calculateTotal(stock)}
                                         </p>
+                                        {gainPercentages[stock.symbol] !== null && (
+                                            <p className="text-sm font-medium">
+                                                Gain (%): {(gainPercentages[stock.symbol] * 100).toFixed(2)}%
+                                            </p>
+                                        )}
+                                        {gainPercentages[stock.symbol] === null && (
+                                            <p className="text-sm text-gray-500">
+                                                Gain data unavailable
+                                            </p>
+                                        )}
                                     </div>
                                     <button
                                         onClick={() => handleDeleteStock(stock.symbol)}
