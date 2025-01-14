@@ -5,6 +5,7 @@ import { get_quote } from "../utils";
 const Portfolio = ({ portfolio, setPortfolio }) => {
     const [stock, setStock] = useState({symbol: '', shares: '', price: ''});
     const [gainPercentages, setGainPercentages] = useState({});
+    const [currentPrices, setCurrentPrices] = useState({});
 
     // Fetch portfolio on component mount
     useEffect(() => {
@@ -16,17 +17,21 @@ const Portfolio = ({ portfolio, setPortfolio }) => {
     useEffect(() => {
         const fetchGains = async () => {
             const newGainPercentages = {};
+            const newCurrentPrices = {};
             for (const stock of portfolio) {
                 try {
                     const currentPrice = await get_quote(stock.symbol.toUpperCase());
                     const gain = (parseFloat(currentPrice) - parseFloat(stock.price)) / parseFloat(stock.price);
-                    newGainPercentages[stock.symbol] = gain;
+                    newGainPercentages[stock.symbol.toUpperCase()] = gain;
+                    newCurrentPrices[stock.symbol.toUpperCase()] = currentPrice;
                 } catch (error) {
-                    console.error(`Error fetching quote for ${stock.symbol}:`, error);
-                    newGainPercentages[stock.symbol] = null;
+                    console.error(`Error fetching quote for ${stock.symbol.toUpperCase()}:`, error);
+                    newGainPercentages[stock.symbol.toUpperCase()] = null;
+                    newCurrentPrices[stock.symbol.toUpperCase()] = null;
                 }
             }
             setGainPercentages(newGainPercentages);
+            setCurrentPrices(newCurrentPrices);
         };
 
         fetchGains();
@@ -56,6 +61,10 @@ const Portfolio = ({ portfolio, setPortfolio }) => {
         return (parseFloat(stock.shares) * parseFloat(stock.price)).toFixed(2);
     };
 
+    const calculateMarketValue = (stock) => {
+        return (parseFloat(stock.shares) * currentPrices[stock.symbol.toUpperCase()]).toFixed(2);
+    }
+
     return (
         <div className="max-w-3xl mx-auto p-6">
             <div className="bg-white rounded-lg shadow-md mb-8">
@@ -69,7 +78,7 @@ const Portfolio = ({ portfolio, setPortfolio }) => {
                                 type="text"
                                 name="symbol"
                                 placeholder="Stock Symbol"
-                                value={stock.symbol}
+                                value={stock.symbol.toUpperCase()}
                                 onChange={handleChange}
                                 required
                                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 uppercase"
@@ -118,26 +127,29 @@ const Portfolio = ({ portfolio, setPortfolio }) => {
                                     className="flex items-center justify-between p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
                                 >
                                     <div className="space-y-1">
-                                        <h3 className="font-semibold text-lg">{stock.symbol.toUpperCase()}</h3>
+                                        <h3 className="font-semibold text-lg">{stock.symbol.toUpperCase()} - ${currentPrices[stock.symbol.toUpperCase()]}</h3>
                                         <p className="text-sm text-gray-600">
                                             {stock.shares} shares @ ${parseFloat(stock.price).toFixed(2)}
                                         </p>
-                                        <p className="text-sm font-medium">
+                                        <p className="text-sm text-gray-600">
                                             Cost Basis: ${calculateTotal(stock)}
                                         </p>
-                                        {gainPercentages[stock.symbol] !== null && (
+                                        <p className="text-sm text-gray-600">
+                                            Market Value: ${calculateMarketValue(stock)}
+                                        </p>
+                                        {gainPercentages[stock.symbol.toUpperCase()] !== null && (
                                             <p className="text-sm font-medium">
-                                                Gain (%): {(gainPercentages[stock.symbol] * 100).toFixed(2)}%
+                                                Gain (%): {(gainPercentages[stock.symbol.toUpperCase()] * 100).toFixed(2)}%
                                             </p>
                                         )}
-                                        {gainPercentages[stock.symbol] === null && (
+                                        {gainPercentages[stock.symbol.toUpperCase()] === null && (
                                             <p className="text-sm text-gray-500">
                                                 Gain data unavailable
                                             </p>
                                         )}
                                     </div>
                                     <button
-                                        onClick={() => handleDeleteStock(stock.symbol)}
+                                        onClick={() => handleDeleteStock(stock.symbol.toUpperCase())}
                                         className="h-8 w-8 flex items-center justify-center bg-red-500 hover:bg-red-600 text-white rounded-md transition-colors"
                                     >
                                         ×

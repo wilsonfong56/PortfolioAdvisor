@@ -7,6 +7,6 @@ def add_stock_service(portfolio, symbol, shares, price):
             item['shares'] += shares
             item['price'] = avg_cost
             return portfolio
-    new_stock = {'symbol': symbol, 'shares': shares, 'price': price}
+    new_stock = {'symbol': symbol.upper().strip(), 'shares': shares, 'price': price}
     portfolio.append(new_stock)
     return portfolio
