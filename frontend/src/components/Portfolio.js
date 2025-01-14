@@ -2,10 +2,9 @@ import React, { useState, useEffect } from "react";
 import { addStock, deleteStock, fetchPortfolio } from "../api";
 import { get_quote } from "../utils";
 
-const Portfolio = ({ portfolio, setPortfolio }) => {
+const Portfolio = ({ portfolio, setPortfolio, currentPrices, setCurrentPrices }) => {
     const [stock, setStock] = useState({symbol: '', shares: '', price: ''});
     const [gainPercentages, setGainPercentages] = useState({});
-    const [currentPrices, setCurrentPrices] = useState({});
 
     // Fetch portfolio on component mount
     useEffect(() => {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const ChatInterface = ({ portfolio }) => {
+const ChatInterface = ({ portfolio, currentPrices }) => {
     const [messages, setMessages] = useState([
         { text: "Hi! I'm your portfolio assistant. I can help you analyze your portfolio and answer questions about your investments.", sender: 'bot' }
     ]);
@@ -9,7 +9,7 @@ const ChatInterface = ({ portfolio }) => {
 
     const calculatePortfolioValue = () => {
         return portfolio.reduce((total, stock) => {
-            return total + (parseFloat(stock.shares) * parseFloat(stock.price));
+            return total + (parseFloat(stock.shares) * parseFloat(currentPrices[stock.symbol.toUpperCase()]))
         }, 0).toFixed(2);
     };
 
