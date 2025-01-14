@@ -1,52 +1,64 @@
 import React, { useState } from 'react';
+import { ChatOpenAI } from "@langchain/openai";
+import {HumanMessage, SystemMessage} from "@langchain/core/messages";
+import { BaseMessage } from "@langchain/core/messages";
+
+// Initialize LangChain ChatOpenAI
+const chat = new ChatOpenAI({
+    openAIApiKey: process.env.OPENAI_API_KEY,
+    streaming: false,
+    modelName: 'gpt-4',
+});
 
 const ChatInterface = ({ portfolio, currentPrices }) => {
     const [messages, setMessages] = useState([
-        { text: "Hi! I'm your portfolio assistant. I can help you analyze your portfolio and answer questions about your investments.", sender: 'bot' }
+        {
+            text: "Hi! I'm your portfolio assistant. I can help you analyze your portfolio and answer questions about your investments.",
+            sender: 'bot',
+        },
     ]);
     const [inputText, setInputText] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [currentResponse, setCurrentResponse] = useState(''); // For streaming response
 
     const calculatePortfolioValue = () => {
-        return portfolio.reduce((total, stock) => {
-            return total + (parseFloat(stock.shares) * parseFloat(currentPrices[stock.symbol.toUpperCase()]))
-        }, 0).toFixed(2);
+        return portfolio
+            .reduce((total, stock) => {
+                return total + parseFloat(stock.shares) * parseFloat(currentPrices[stock.symbol.toUpperCase()]);
+            }, 0)
+            .toFixed(2);
     };
 
     const handleSendMessage = async (e) => {
         e.preventDefault();
         if (!inputText.trim()) return;
 
-        // Add user message
-        const userMessage = { text: inputText, sender: 'user' };
-        setMessages(prev => [...prev, userMessage]);
+        const userMessage = {text: inputText, sender: 'user'};
+        setMessages((prev) => [...prev, userMessage]);
         setIsLoading(true);
-
-        // Here you would typically make an API call to your LLM service
-        // For now, we'll simulate some basic responses based on keywords
         let botResponse = "I'll help you analyze that.";
         const userQuery = inputText.toLowerCase();
+        setInputText('');
 
         if (userQuery.includes('total value') || userQuery.includes('worth')) {
             botResponse = `Your portfolio's total value is $${calculatePortfolioValue()}.`;
         } else if (userQuery.includes('stocks') || userQuery.includes('holdings')) {
             botResponse = `You currently have ${portfolio.length} stocks in your portfolio: ${portfolio.map(stock => stock.symbol.toUpperCase()).join(', ')}.`;
-        } else if (userQuery.includes('largest') || userQuery.includes('biggest')) {
-            const largest = portfolio.reduce((max, stock) => {
-                const value = parseFloat(stock.shares) * parseFloat(stock.price);
-                return value > max.value ? { symbol: stock.symbol, value } : max;
-            }, { symbol: '', value: 0 });
-            botResponse = `Your largest holding is ${largest.symbol.toUpperCase()} worth $${largest.value.toFixed(2)}.`;
+        } else {
+            const messages: BaseMessage[] = [
+                new SystemMessage("You are a professional portfolio assistant and are qualified to give financial advice."),
+                new HumanMessage(`Portfolio context (price shown is price bought): ${JSON.stringify(portfolio)}\n\nUser question: ${userQuery}`)
+            ];
+            const message = await chat.invoke(messages)
+            botResponse = message.content
         }
-
         // Simulate API delay
         setTimeout(() => {
             setMessages(prev => [...prev, { text: botResponse, sender: 'bot' }]);
             setIsLoading(false);
         }, 1000);
 
-        setInputText('');
-    };
+    }
 
     return (
         <div className="bg-white rounded-lg shadow-md h-[500px] flex flex-col">
@@ -63,9 +75,7 @@ const ChatInterface = ({ portfolio, currentPrices }) => {
                     >
                         <div
                             className={`max-w-[80%] p-3 rounded-lg ${
-                                message.sender === 'user'
-                                    ? 'bg-blue-500 text-white'
-                                    : 'bg-gray-100 text-gray-800'
+                                message.sender === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-800'
                             }`}
                         >
                             {message.text}
