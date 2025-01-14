@@ -139,7 +139,8 @@ const Portfolio = ({ portfolio, setPortfolio }) => {
                                         </p>
                                         {gainPercentages[stock.symbol.toUpperCase()] !== null && (
                                             <p className="text-sm font-medium">
-                                                Gain (%): {(gainPercentages[stock.symbol.toUpperCase()] * 100).toFixed(2)}%
+                                                Gain (%): {(gainPercentages[stock.symbol.toUpperCase()] * 100).toFixed(2)}% <br />
+                                                Gain ($): ${(calculateMarketValue(stock)-calculateTotal(stock)).toFixed(2)}
                                             </p>
                                         )}
                                         {gainPercentages[stock.symbol.toUpperCase()] === null && (
