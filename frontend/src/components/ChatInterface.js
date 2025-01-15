@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
-import { ChatOpenAI } from "@langchain/openai";
-import {HumanMessage, SystemMessage} from "@langchain/core/messages";
-import { BaseMessage } from "@langchain/core/messages";
+import OpenAI from "openai";
+import { handleChat } from "../api";
 
 // Initialize LangChain ChatOpenAI
-const chat = new ChatOpenAI({
-    openAIApiKey: process.env.OPENAI_API_KEY,
-    streaming: false,
-    modelName: 'gpt-4',
-});
+const openai = new OpenAI({
+    apiKey: process.env.REACT_APP_OPENAI_API_KEY,
+    dangerouslyAllowBrowser: true
+})
 
 const ChatInterface = ({ portfolio, currentPrices }) => {
     const [messages, setMessages] = useState([
@@ -19,15 +17,14 @@ const ChatInterface = ({ portfolio, currentPrices }) => {
     ]);
     const [inputText, setInputText] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const [currentResponse, setCurrentResponse] = useState(''); // For streaming response
 
-    const calculatePortfolioValue = () => {
-        return portfolio
-            .reduce((total, stock) => {
-                return total + parseFloat(stock.shares) * parseFloat(currentPrices[stock.symbol.toUpperCase()]);
-            }, 0)
-            .toFixed(2);
-    };
+    // const calculatePortfolioValue = () => {
+    //     return portfolio
+    //         .reduce((total, stock) => {
+    //             return total + parseFloat(stock.shares) * parseFloat(currentPrices[stock.symbol.toUpperCase()]);
+    //         }, 0)
+    //         .toFixed(2);
+    // };
 
     const handleSendMessage = async (e) => {
         e.preventDefault();
@@ -36,23 +33,64 @@ const ChatInterface = ({ portfolio, currentPrices }) => {
         const userMessage = {text: inputText, sender: 'user'};
         setMessages((prev) => [...prev, userMessage]);
         setIsLoading(true);
-        let botResponse = "I'll help you analyze that.";
+        let botResponse;
         const userQuery = inputText.toLowerCase();
         setInputText('');
+        let docContext = "";
 
-        if (userQuery.includes('total value') || userQuery.includes('worth')) {
-            botResponse = `Your portfolio's total value is $${calculatePortfolioValue()}.`;
-        } else if (userQuery.includes('stocks') || userQuery.includes('holdings')) {
-            botResponse = `You currently have ${portfolio.length} stocks in your portfolio: ${portfolio.map(stock => stock.symbol.toUpperCase()).join(', ')}.`;
-        } else {
-            const messages: BaseMessage[] = [
-                new SystemMessage("You are a professional portfolio assistant and are qualified to give financial advice."),
-                new HumanMessage(`Portfolio context (price shown is price bought): ${JSON.stringify(portfolio)}\n\nUser question: ${userQuery}`)
-            ];
-            const message = await chat.invoke(messages)
-            botResponse = message.content
+        // Create embedding for the user query
+        const embedding = await openai.embeddings.create({
+            model: "text-embedding-3-small",
+            input: userQuery,
+            encoding_format: "float"
+        });
+
+        try {
+            // Query Flask backend
+            const payload = { embedding: embedding.data[0].embedding };
+            const response = await handleChat(payload);
+
+            const documents = await response.data;
+            const docsMap = documents?.map(doc => doc.text);
+            docContext = JSON.stringify(docsMap);
+        } catch (error) {
+            console.error(error);
         }
-        // Simulate API delay
+
+        // Constructing the template with context
+        const template = {
+            role: "system",
+            content: `You are a professional portfolio assistant and are qualified to give financial advice. 
+        Use the below context to augment what you know about stocks and finance.
+        The context will provide you with the most recent page data from a bunch of financial 
+        news and data sites. If the context doesn't include the information you need, answer based 
+        on your existing knowledge and don't mention the source of your information or what the context 
+        does or doesn't include. Format responses using markdown where applicable and don't return images.
+        ----------------------
+        START CONTEXT
+        ${docContext}
+        END CONTEXT
+        ----------------------
+        USER'S PORTFOLIO: Portfolio (w/ cost basis)-${JSON.stringify(portfolio)}; Current prices of stocks-${JSON.stringify(currentPrices)}
+        USER QUERY: ${userQuery}
+        ----------------------
+        `
+        };
+        const filteredMessages = messages
+            .filter(message => message.sender === 'user')
+            .map(message => ({
+                role: 'user',
+                content: message.text
+            }));
+
+        const response = await openai.chat.completions.create({
+            model: "gpt-4",
+            stream: false,
+            messages: [template, ...filteredMessages]
+        });
+
+        botResponse = response.choices[0]?.message?.content || "I'm unable to provide a response at this time.";
+
         setTimeout(() => {
             setMessages(prev => [...prev, { text: botResponse, sender: 'bot' }]);
             setIsLoading(false);

@@ -1,5 +1,6 @@
 import axios from 'axios';
-const apiKey = "FINNHUB_API_KEY";
+
+const apiKey = process.env.REACT_APP_FINNHUB_API_KEY;
 
 export const get_quote = async (symbol) => {
     try {

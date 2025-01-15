@@ -2,9 +2,20 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 import yfinance as yf
 from services.portfolio import add_stock_service
+from astrapy.db import AstraDB
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
+
+astra_db = AstraDB(
+    token=os.getenv("ASTRA_DB_TOKEN"),
+    api_endpoint=os.getenv("ASTRA_DB_ENDPOINT")
+)
+collection = astra_db.collection(os.getenv("ASTRA_DB_COLLECTION"))
 
 # In memory portfolio for testing
 portfolio = [
@@ -43,6 +54,26 @@ def delete_stock(symbol):
             portfolio.remove(item)
             break
     return jsonify({"message": "Stock deleted successfully", "portfolio": portfolio})
+
+@app.route('/query', methods=['POST'])
+def vector_search():
+    try:
+        data = request.json
+        embedding = data.get('embedding')
+        if not embedding:
+            return jsonify({"error": "No embedding provided"}), 400
+
+        results = collection.vector_find(
+            vector=embedding,
+            limit=10
+        )
+        # Convert results to list and extract text field
+        documents = [doc for doc in results]
+
+        return jsonify(documents)
+    except Exception as e:
+        print(f"Error in vector search: {str(e)}")
+        return jsonify({"error": "Internal server error"}), 500
 
 if __name__ ==  '__main__':
     app.run(debug=True)
