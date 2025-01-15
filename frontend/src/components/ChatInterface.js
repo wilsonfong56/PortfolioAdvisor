@@ -60,12 +60,11 @@ const ChatInterface = ({ portfolio, currentPrices }) => {
         // Constructing the template with context
         const template = {
             role: "system",
-            content: `You are a professional portfolio assistant and are qualified to give financial advice. 
-        Use the below context to augment what you know about stocks and finance.
-        The context will provide you with the most recent page data from a bunch of financial 
-        news and data sites. If the context doesn't include the information you need, answer based 
-        on your existing knowledge and don't mention the source of your information or what the context 
-        does or doesn't include. Format responses using markdown where applicable and don't return images.
+            content: `You are a professional portfolio assistant and are qualified to give specific financial advice related to the user's portfolio. 
+            Use the context to enhance your understanding of stocks, finance, and market trends, focusing solely on personalized insights based on the user's existing portfolio and query. 
+            If the context lacks specific information relevant to the user's query, provide advice based on the knowledge of financial markets, avoiding generic advice. 
+            Avoid discussing unrelated topics such as broad economic indicators unless directly relevant to the user's portfolio or specific stocks.
+            Format responses using markdown where applicable and don't return images.
         ----------------------
         START CONTEXT
         ${docContext}
@@ -98,8 +97,20 @@ const ChatInterface = ({ portfolio, currentPrices }) => {
 
     }
 
+    function sanitizeHtml(input) {
+        const allowedTags = ['strong', 'em', 'p', 'br']; // Customize allowed tags
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(input, 'text/html');
+        Array.from(doc.body.getElementsByTagName('*')).forEach(el => {
+            if (!allowedTags.includes(el.tagName.toLowerCase())) {
+                el.remove();
+            }
+        });
+        return doc.body.innerHTML;
+    }
+
     return (
-        <div className="bg-white rounded-lg shadow-md h-[500px] flex flex-col">
+        <div className="bg-white rounded-lg shadow-md h-[750px] flex flex-col">
             <div className="p-4 border-b border-gray-200">
                 <h2 className="text-xl font-semibold">Portfolio Assistant</h2>
             </div>
@@ -115,8 +126,10 @@ const ChatInterface = ({ portfolio, currentPrices }) => {
                             className={`max-w-[80%] p-3 rounded-lg ${
                                 message.sender === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-800'
                             }`}
+                            dangerouslySetInnerHTML={{
+                                __html: sanitizeHtml(message.text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'))
+                            }}
                         >
-                            {message.text}
                         </div>
                     </div>
                 ))}
