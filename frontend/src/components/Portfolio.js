@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { addStock, deleteStock, fetchPortfolio } from "../api";
-import { get_quote } from "../utils";
+import { addStock, deleteStock, fetchPortfolio } from "../api.js";
+import { get_quote } from "../utils.js";
 
 const Portfolio = ({ portfolio, setPortfolio, currentPrices, setCurrentPrices }) => {
     const [stock, setStock] = useState({symbol: '', shares: '', price: ''});
