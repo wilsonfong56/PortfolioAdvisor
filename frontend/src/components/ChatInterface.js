@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { ChatOpenAI } from "@langchain/openai";
-import {HumanMessage, SystemMessage} from "@langchain/core/messages";
+import { HumanMessage, SystemMessage } from "@langchain/core/messages";
 import { BaseMessage } from "@langchain/core/messages";
 
 // Initialize LangChain ChatOpenAI
 const chat = new ChatOpenAI({
-    openAIApiKey: process.env.OPENAI_API_KEY,
+    openAIApiKey: process.env.REACT_APP_OPENAI_API_KEY,
     streaming: false,
     modelName: 'gpt-4',
 });
@@ -19,7 +19,6 @@ const ChatInterface = ({ portfolio, currentPrices }) => {
     ]);
     const [inputText, setInputText] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const [currentResponse, setCurrentResponse] = useState(''); // For streaming response
 
     const calculatePortfolioValue = () => {
         return portfolio
