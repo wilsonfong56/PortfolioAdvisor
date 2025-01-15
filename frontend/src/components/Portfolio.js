@@ -34,7 +34,7 @@ const Portfolio = ({ portfolio, setPortfolio, currentPrices, setCurrentPrices })
         };
 
         fetchGains();
-    }, [portfolio]); // Update gain percentages when portfolio changes
+    }, [portfolio, setCurrentPrices]); // Update gain percentages when portfolio changes
 
 
     const handleChange = (e) => {
