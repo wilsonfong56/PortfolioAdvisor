@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import Portfolio from "./components/Portfolio";
-import ChatInterface from "./components/ChatInterface";
+import Portfolio from "./components/Portfolio.js";
+import ChatInterface from "./components/ChatInterface.js";
 import './index.css';
 
 function App() {
