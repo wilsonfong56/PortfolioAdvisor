@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { addStock, deleteStock, fetchPortfolio } from "../api.js";
+import { addStock, deleteStock, fetchPortfolio } from "../api/api.js";
 import { get_quote } from "../utils.js";
 
 const Portfolio = ({ portfolio, setPortfolio, currentPrices, setCurrentPrices }) => {
