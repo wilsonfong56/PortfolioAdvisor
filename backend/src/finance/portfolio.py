@@ -2,19 +2,8 @@ from flask import jsonify, request
 from flask_cors import CORS
 from ..app import app
 import yfinance as yf
-from astrapy.db import AstraDB
-import os
-from dotenv import load_dotenv
-
-load_dotenv()
 
 CORS(app)
-
-astra_db = AstraDB(
-    token=os.getenv("ASTRA_DB_TOKEN"),
-    api_endpoint=os.getenv("ASTRA_DB_ENDPOINT")
-)
-collection = astra_db.collection(os.getenv("ASTRA_DB_COLLECTION"))
 
 # In memory portfolio for testing
 portfolio = [
@@ -22,8 +11,7 @@ portfolio = [
     { "symbol": 'GOOGL', "shares": 5, "price": 140.25 }
 ]
 
-
-def add_stock_service(portfolio, symbol, shares, price):
+def add_stock_helper(portfolio, symbol, shares, price):
     for item in portfolio:
         if item['symbol'].upper() == symbol.upper():
             dollar_cost = (item['shares'] * item['price']) + (shares * price)
@@ -52,7 +40,7 @@ def add_stock():
     symbol = data.get("symbol")
     shares = data.get("shares")
     price = data.get("price")
-    portfolio = add_stock_service(portfolio, symbol, int(shares), float(price))
+    portfolio = add_stock_helper(portfolio, symbol, int(shares), float(price))
     return jsonify({"message": "Stock added successfully", "portfolio": portfolio}), 201
 
 @app.route('/portfolio', methods=['GET'])
@@ -66,23 +54,3 @@ def delete_stock(symbol):
             portfolio.remove(item)
             break
     return jsonify({"message": "Stock deleted successfully", "portfolio": portfolio})
-
-@app.route('/query', methods=['POST'])
-def vector_search():
-    try:
-        data = request.json
-        embedding = data.get('embedding')
-        if not embedding:
-            return jsonify({"error": "No embedding provided"}), 400
-
-        results = collection.vector_find(
-            vector=embedding,
-            limit=10
-        )
-        # Convert results to list and extract text field
-        documents = [doc for doc in results]
-
-        return jsonify(documents)
-    except Exception as e:
-        print(f"Error in vector search: {str(e)}")
-        return jsonify({"error": "Internal server error"}), 500
