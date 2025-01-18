@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import OpenAI from "openai";
-import { handleChat } from "../api";
+import { handleChat } from "../api/api.js";
 
 // Initialize LangChain ChatOpenAI
 const openai = new OpenAI({

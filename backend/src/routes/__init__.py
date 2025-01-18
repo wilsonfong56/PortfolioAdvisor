@@ -1,6 +1,6 @@
 from sqlalchemy.sql import text
 from flask import Blueprint
-from backend import db
+from backend.src.shared import db
 
 test_routes = Blueprint('test_routes', __name__)
 

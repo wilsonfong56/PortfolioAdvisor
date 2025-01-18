@@ -1,13 +1,9 @@
-from ..app import app
-from flask import jsonify, request
+from flask import jsonify, request, Blueprint
 from astrapy.db import AstraDB
 import os
 from dotenv import load_dotenv
-from flask_cors import CORS
 
 load_dotenv()
-
-CORS(app)
 
 astra_db = AstraDB(
     token=os.getenv("ASTRA_DB_TOKEN"),
@@ -15,7 +11,9 @@ astra_db = AstraDB(
 )
 collection = astra_db.collection(os.getenv("ASTRA_DB_COLLECTION"))
 
-@app.route('/query', methods=['POST'])
+chat_routes = Blueprint('chat_routes', __name__)
+
+@chat_routes.route('/query', methods=['POST'])
 def vector_search():
     try:
         data = request.json
