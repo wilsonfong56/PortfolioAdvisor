@@ -10,3 +10,5 @@ export const handleChat = (payload) => API.post(`/query`, payload, {
         'Content-Type': 'application/json',
     },
 });
+export const registerUser = (name, email, password) => API.post('/register', { name, email, password });
+export const loginUser = (email, password) => API.post('/login', { email, password })
