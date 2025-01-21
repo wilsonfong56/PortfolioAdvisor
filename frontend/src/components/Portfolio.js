@@ -38,8 +38,8 @@ const Portfolio = ({ portfolio, setPortfolio, currentPrices, setCurrentPrices })
 
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
-        setStock({ ...stock, [name]: value });
+        const {name, value} = e.target;
+        setStock({...stock, [name]: value});
     };
 
     const handleAddStock = (e) => {
@@ -47,7 +47,7 @@ const Portfolio = ({ portfolio, setPortfolio, currentPrices, setCurrentPrices })
         addStock(stock)
             .then((response) => setPortfolio(response.data.portfolio))
             .catch((error) => console.log(error));
-        setStock({ symbol: '', shares: '', price: ''});
+        setStock({symbol: '', shares: '', price: ''});
     };
 
     const handleDeleteStock = (symbol) => {
@@ -65,7 +65,7 @@ const Portfolio = ({ portfolio, setPortfolio, currentPrices, setCurrentPrices })
     }
 
     return (
-        <div className="max-w-3xl mx-auto p-6">
+        <div className="max-w-5xl mx-auto p-6">
             <div className="bg-white rounded-lg shadow-md mb-8">
                 <div className="p-6 border-b border-gray-200">
                     <h2 className="text-2xl font-semibold">Add New Stock</h2>
@@ -119,49 +119,50 @@ const Portfolio = ({ portfolio, setPortfolio, currentPrices, setCurrentPrices })
                     {portfolio.length === 0 ? (
                         <p className="text-center text-gray-500">No stocks in your portfolio yet</p>
                     ) : (
-                        <div className="space-y-4">
-                            {portfolio.map((stock, index) => (
-                                <div
-                                    key={index}
-                                    className="flex items-center justify-between p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
-                                >
-                                    <div className="space-y-1">
-                                        <h3 className="font-semibold text-lg">{stock.symbol.toUpperCase()} - ${currentPrices[stock.symbol.toUpperCase()]}</h3>
-                                        <p className="text-sm text-gray-600">
-                                            {stock.shares} shares @ ${parseFloat(stock.price).toFixed(2)}
-                                        </p>
-                                        <p className="text-sm text-gray-600">
-                                            Cost Basis: ${calculateTotal(stock)}
-                                        </p>
-                                        <p className="text-sm text-gray-600">
-                                            Market Value: ${calculateMarketValue(stock)}
-                                        </p>
-                                        {gainPercentages[stock.symbol.toUpperCase()] !== null && (
-                                            <p className="text-sm font-medium">
-                                                Gain (%): {(gainPercentages[stock.symbol.toUpperCase()] * 100).toFixed(2)}% <br />
-                                                Gain ($): ${(calculateMarketValue(stock)-calculateTotal(stock)).toFixed(2)}
-                                            </p>
-                                        )}
-                                        {gainPercentages[stock.symbol.toUpperCase()] === null && (
-                                            <p className="text-sm text-gray-500">
-                                                Gain data unavailable
-                                            </p>
-                                        )}
-                                    </div>
-                                    <button
-                                        onClick={() => handleDeleteStock(stock.symbol.toUpperCase())}
-                                        className="h-8 w-8 flex items-center justify-center bg-red-500 hover:bg-red-600 text-white rounded-md transition-colors"
-                                    >
-                                        ×
-                                    </button>
-                                </div>
-                            ))}
-                        </div>
-                    )}
+                            <div className="overflow-x-auto">
+                                <table className="w-full">
+                                    <thead>
+                                        <tr className="text-left text-sm text-gray-500">
+                                            <th className="pb-4">Symbol</th>
+                                            <th className="pb-4">Shares</th>
+                                            <th className="pb-4">Cost Avg</th>
+                                            <th className="pb-4">Current Price</th>
+                                            <th className="pb-4">Change (%)</th>
+                                            <th className="pb-4">Change ($)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {portfolio.map((stock) => (
+                                        <tr key={stock.symbol} className="border-t">
+                                            <td className="py-4 font-medium">{stock.symbol}</td>
+                                            <td className="py-4">{stock.shares}</td>
+                                            <td className="py-4">${stock.price.toFixed(2)}</td>
+                                            <td className="py-4">${currentPrices[stock.symbol.toUpperCase()]}</td>
+                                            <td className={`py-4 ${gainPercentages[stock.symbol.toUpperCase()] > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                                {gainPercentages[stock.symbol.toUpperCase()] > 0 ? '+' : ''}{(gainPercentages[stock.symbol.toUpperCase()] * 100).toFixed(2)}%
+                                            </td>
+                                            <td className={`py-4 ${(calculateMarketValue(stock) - calculateTotal(stock)) > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                                {(calculateMarketValue(stock) - calculateTotal(stock)) > 0 ? '+$' : '-$'}{Math.abs(calculateMarketValue(stock) - calculateTotal(stock)).toFixed(2)}
+                                            </td>
+                                            <td className="py-4">
+                                                <button
+                                                    onClick={() => handleDeleteStock(stock.symbol.toUpperCase())}
+                                                    className="h-8 w-8 flex items-center justify-center bg-red-500 hover:bg-red-600 text-white rounded-md transition-colors"
+                                                >
+                                                    ×
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )
+                    }
                 </div>
             </div>
         </div>
-    );
-};
+    )
+}
 
 export default Portfolio;

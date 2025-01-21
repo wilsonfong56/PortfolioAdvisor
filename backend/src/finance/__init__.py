@@ -35,7 +35,7 @@ def add_stock():
 def get_portfolio():
     return jsonify({"portfolio": portfolio})
 
-@portfolio_routes.route('/portfolio/', methods=['DELETE'])
+@portfolio_routes.route('/portfolio', methods=['DELETE'])
 def delete_stock():
     data = request.json
     symbol = data.get("symbol")

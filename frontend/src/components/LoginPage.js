@@ -1,8 +1,8 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import Header from "./Header.js";
 import { TrendingUp } from 'lucide-react';
-import {Link, useNavigate} from "react-router-dom";
-import {loginUser} from "../api/api.js";
+import { Link, useNavigate } from "react-router-dom";
+import { loginUser } from "../api/api.js";
 
 const LoginPage = () => {
     const [email, setEmail] = useState("");
@@ -77,19 +77,9 @@ const LoginPage = () => {
                             </div>
                         </div>
                         <div className="flex items-center justify-between">
-                            {/*<div className="flex items-center">*/}
-                            {/*    <input*/}
-                            {/*        id="remember-me"*/}
-                            {/*        type="checkbox"*/}
-                            {/*        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"*/}
-                            {/*    />*/}
-                            {/*    <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">*/}
-                            {/*        Remember me*/}
-                            {/*    </label>*/}
-                            {/*</div>*/}
-                            <a href="#" className="text-sm text-blue-600 hover:text-blue-500">
-                                Forgot password?
-                            </a>
+                            {/*<a href="#" className="text-sm text-blue-600 hover:text-blue-500">*/}
+                            {/*    Forgot password?*/}
+                            {/*</a>*/}
                         </div>
                         <button
                             type="submit"
@@ -111,7 +101,7 @@ const LoginPage = () => {
                         </div>
 
                         <div className="mt-6">
-                            <Link to="/signup">
+                            <Link to='/signup'>
                                 <button
                                     className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                                 >
