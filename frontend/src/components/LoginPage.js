@@ -77,6 +77,8 @@ const LoginPage = () => {
                             </div>
                         </div>
                         <div className="flex items-center justify-between">
+                            {fieldsMissing && <p className="text-red-800">All fields are required</p>}
+                            {loginFail && <p className="text-red-800">Incorrect email or password</p>}
                             {/*<a href="#" className="text-sm text-blue-600 hover:text-blue-500">*/}
                             {/*    Forgot password?*/}
                             {/*</a>*/}

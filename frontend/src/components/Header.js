@@ -13,7 +13,7 @@ function Header() {
                                 <BadgeDollarSign className="h-8 w-8 text-indigo-600"/>
                                 <span
                                     className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                                  Monet
+                                  MarketMentor
                                 </span>
                             </a>
                         </div>

@@ -26,16 +26,12 @@ const SignupPage = () => {
                 .then((response) => {
                     const message = response.data.message
                     if (message === "Registration Successful!") {
-                        console.log("Registration successful!")
                         navigate("/login");
                     } else if (message === "Missing field(s)") {
-                        console.log("All fields must be filled!")
                         setFieldsMissing(true);
                     } else if (message === "Email taken.") {
-                        console.log("Email already has account")
                         setEmailTaken(true);
                     } else if (message === "Invalid email") {
-                        console.log("Invalid email")
                         setIsInvalidEmail(true);
                     }
                 })
@@ -120,6 +116,12 @@ const SignupPage = () => {
                                 />
                             </div>
                         </div>
+                        <div className="flex items-center justify-between">
+                            {fieldsMissing && <p className="text-red-800">All fields are required</p>}
+                            {emailTaken && <p className="text-red-800">Email already associated with an existing account</p>}
+                            {isInvalidEmail && <p className="text-red-800">Invalid email</p>}
+                            {passwordsMismatched && <p className="text-red-800">Passwords do not match</p>}
+                        </div>
                         <button
                             type="submit"
                             className="w-full py-2 px-4 border border-transparent rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
@@ -128,7 +130,7 @@ const SignupPage = () => {
                         </button>
                     </form>
                     <div className="mt-6">
-                        <div className="relative">
+                    <div className="relative">
                             <div className="absolute inset-0 flex items-center">
                                 <div className="w-full border-t border-gray-300"/>
                             </div>
