@@ -1,9 +1,34 @@
-import React from "react";
+import React, {useState} from "react";
 import Header from "./Header.js";
 import { TrendingUp } from 'lucide-react';
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
+import {loginUser} from "../api/api.js";
 
 const LoginPage = () => {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [fieldsMissing, setFieldsMissing] = useState(false)
+    const [loginFail, setLoginFail] = useState(false)
+    const navigate = useNavigate();
+
+    const handleLogin = (e) => {
+        e.preventDefault();
+        setFieldsMissing(false)
+        setLoginFail(false)
+        loginUser(email, password)
+            .then((response) => {
+                const message = response.data.message;
+                if (message === "Successful login") {
+                    navigate('/app')
+                }
+                else if (message === "Unsuccessful login") {
+                    setLoginFail(true)
+                }
+                else if (message === "All fields are required.") {
+                    setFieldsMissing(true)
+                }
+            })
+    }
 
     return (
         <>
@@ -21,7 +46,7 @@ const LoginPage = () => {
                     </h2>
                 </div>
                 <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-                    <form className="space-y-4">
+                    <form onSubmit={handleLogin} className="space-y-4">
                         <div>
                             <label htmlFor="loginEmail" className="block text-sm font-medium text-gray-700 mb-1">
                                 Email
@@ -31,6 +56,8 @@ const LoginPage = () => {
                                 type="email"
                                 className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 placeholder="you@example.com"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
                             />
                         </div>
                         <div>
@@ -41,30 +68,25 @@ const LoginPage = () => {
                                 <input
                                     id="loginPassword"
                                     type="password"
-                                    // type={showPassword ? "text" : "password"}
                                     className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                     placeholder="••••••••"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
                                 />
-                                <button
-                                    type="button"
-                                    // onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600"
-                                >
-                                    {/*{showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}*/}
-                                </button>
+
                             </div>
                         </div>
                         <div className="flex items-center justify-between">
-                            <div className="flex items-center">
-                                <input
-                                    id="remember-me"
-                                    type="checkbox"
-                                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                                />
-                                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
-                                    Remember me
-                                </label>
-                            </div>
+                            {/*<div className="flex items-center">*/}
+                            {/*    <input*/}
+                            {/*        id="remember-me"*/}
+                            {/*        type="checkbox"*/}
+                            {/*        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"*/}
+                            {/*    />*/}
+                            {/*    <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">*/}
+                            {/*        Remember me*/}
+                            {/*    </label>*/}
+                            {/*</div>*/}
                             <a href="#" className="text-sm text-blue-600 hover:text-blue-500">
                                 Forgot password?
                             </a>

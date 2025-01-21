@@ -7,29 +7,25 @@ dotenv.config();
 
 const openai = new OpenAI({ apiKey: process.env.REACT_APP_OPENAI_API_KEY });
 
-const financialData = [
-    "https://finance.yahoo.com/?fr=yhssrp_catchall",
-    "https://www.google.com/finance/",
-    "https://www.nasdaq.com/",
+const news_sites = [
     "https://www.investing.com/",
+    "https://finance.yahoo.com/?fr=yhssrp_catchall",
     "https://www.reuters.com/",
     "https://www.bloomberg.com/",
     "https://www.cnbc.com/",
-    "https://www.fidelity.com/",
     "https://www.sec.gov/",
+    "https://seekingalpha.com/",
+    "https://www.investopedia.com/",
+    "https://www.fool.com/"
+]
+const financialData = [
+    "https://www.google.com/finance/",
+    "https://www.nasdaq.com/",
     "https://www.nasdaqtrader.com/",
     "https://www.marketwatch.com/",
-    "https://www.marketwatch.com/investing/",
-    "https://seekingalpha.com/",
-    "https://www.reddit.com/r/stocks/",
-    "https://www.reddit.com/r/finance/",
-    "https://www.investopedia.com/",
-    "https://www.fool.com/",
     "https://coinmarketcap.com/",
     "https://www.coingecko.com/",
-    "https://fred.stlouisfed.org/",
     "https://www.bea.gov/",
-    "https://www.roic.ai/",
     "https://companiesmarketcap.com/",
     "https://companiesmarketcap.com/most-profitable-companies/",
     "https://companiesmarketcap.com/largest-companies-by-revenue/",
@@ -79,7 +75,7 @@ const createCollection = async (similarityMetric, defaultMetric = "dot_product")
 }
 
 const loadSampleData = async () => {
-    const collection = await db.collection(process.env.ReACT_APP_ASTRA_DB_COLLECTION)
+    const collection = await db.collection(process.env.REACT_APP_ASTRA_DB_COLLECTION)
     for await ( const url of financialData ) {
         try {
             console.log(`Scraping ${url}...`)
