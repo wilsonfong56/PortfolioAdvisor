@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, session
 from ...models.User import User
 from ..shared import db
 from .authentication import hash_password, verify_password
@@ -41,6 +41,12 @@ def login():
     if existing_user:
         correct_hashed_password = existing_user.password_hash
         if verify_password(password, correct_hashed_password):
+            session['email'] = email
             return jsonify({"message": "Successful login"})
 
     return jsonify({"message": "Unsuccessful login"})
+
+@authentication_routes.route('/logout', methods=['POST'])
+def logout():
+    session.clear()
+    return jsonify({"message": "Logged out"})
