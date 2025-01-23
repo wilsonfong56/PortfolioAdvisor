@@ -8,7 +8,6 @@ dotenv.config();
 const openai = new OpenAI({ apiKey: process.env.REACT_APP_OPENAI_API_KEY });
 
 const news_sites = [
-    "https://www.investing.com/",
     "https://finance.yahoo.com/?fr=yhssrp_catchall",
     "https://www.reuters.com/",
     "https://www.bloomberg.com/",
@@ -16,13 +15,13 @@ const news_sites = [
     "https://www.sec.gov/",
     "https://seekingalpha.com/",
     "https://www.investopedia.com/",
-    "https://www.fool.com/"
+    "https://www.fool.com/",
+    "https://www.marketwatch.com/",
+    "https://stockanalysis.com/",
 ]
 const financialData = [
     "https://www.google.com/finance/",
     "https://www.nasdaq.com/",
-    "https://www.nasdaqtrader.com/",
-    "https://www.marketwatch.com/",
     "https://coinmarketcap.com/",
     "https://www.coingecko.com/",
     "https://www.bea.gov/",
@@ -39,7 +38,6 @@ const financialData = [
     "https://companiesmarketcap.com/usa/american-companies-ranked-by-operating-margin/",
     "https://en.wikipedia.org/wiki/List_of_public_corporations_by_market_capitalization",
     "https://www.tradingview.com/markets/world-stocks/worlds-largest-companies/",
-    "https://stockanalysis.com/",
     "https://hedgefollow.com/Largest-Hedge-Fund-Buys.php",
     "https://hedgefollow.com/Largest-Hedge-Fund-Sells.php",
     "https://hedgefollow.com/top-hedge-funds.php",
