@@ -64,7 +64,7 @@ const ChatInterface = ({ portfolio, currentPrices }) => {
             Use the context to enhance your understanding of stocks, finance, and market trends, focusing solely on personalized insights based on the user's existing portfolio and query. 
             If the context lacks specific information relevant to the user's query, provide advice based on the knowledge of financial markets, avoiding generic advice. 
             Avoid discussing unrelated topics such as broad economic indicators unless directly relevant to the user's portfolio or specific stocks.
-            Format responses using markdown where applicable and don't return images.
+            Remove all formatting and respond with plain text. Assume start context is always current and up to date.
         ----------------------
         START CONTEXT
         ${docContext}

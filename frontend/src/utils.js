@@ -6,7 +6,11 @@ export const get_quote = async (symbol) => {
     try {
         const url = `https://finnhub.io/api/v1/quote?symbol=${symbol}&token=${apiKey}`;
         const response = await axios.get(url);
-        return response.data.c;
+        return {
+            price: response.data.c,
+            dailyGain: response.data.d,
+            dailyGainPercentage: response.data.dp,
+        };
     } catch (error) {
         console.error(error);
         throw error;
