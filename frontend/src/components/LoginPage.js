@@ -3,6 +3,7 @@ import Header from "./Header.js";
 import { TrendingUp } from 'lucide-react';
 import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from "../api/api.js";
+import Cookies from 'js-cookie';
 
 const LoginPage = () => {
     const [email, setEmail] = useState("");
@@ -19,6 +20,7 @@ const LoginPage = () => {
             .then((response) => {
                 const message = response.data.message;
                 if (message === "Successful login") {
+                    Cookies.set('email', email)
                     navigate('/app')
                 }
                 else if (message === "Unsuccessful login") {

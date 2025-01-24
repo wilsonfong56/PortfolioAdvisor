@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { addStock, deleteStock, fetchPortfolio } from "../api/api.js";
 import { get_quote } from "../utils.js";
+import Cookies from "js-cookie";
 
 const Portfolio = ({ portfolio, setPortfolio, currentPrices, setCurrentPrices }) => {
     const [stock, setStock] = useState({symbol: '', shares: '', price: ''});
@@ -10,7 +11,7 @@ const Portfolio = ({ portfolio, setPortfolio, currentPrices, setCurrentPrices })
 
     // Fetch portfolio on component mount
     useEffect(() => {
-        fetchPortfolio()
+        fetchPortfolio(Cookies.get("email"))
             .then((res) => setPortfolio(res.data.portfolio))
             .catch((err) => console.error(err));
     }, [setPortfolio]);
@@ -53,14 +54,14 @@ const Portfolio = ({ portfolio, setPortfolio, currentPrices, setCurrentPrices })
 
     const handleAddStock = (e) => {
         e.preventDefault();
-        addStock(stock)
+        addStock(stock, Cookies.get("email"))
             .then((response) => setPortfolio(response.data.portfolio))
             .catch((error) => console.log(error));
         setStock({symbol: '', shares: '', price: ''});
     };
 
     const handleDeleteStock = (symbol) => {
-        deleteStock(symbol)
+        deleteStock(symbol, Cookies.get("email"))
             .then((response) => setPortfolio(response.data.portfolio))
             .catch((error) => console.log(error));
     };
@@ -150,7 +151,7 @@ const Portfolio = ({ portfolio, setPortfolio, currentPrices, setCurrentPrices })
                                             <td className="py-4">${stock.price.toFixed(2)}</td>
                                             <td className="py-4">${currentPrices[stock.symbol.toUpperCase()]}</td>
                                             <td className={`py-4 ${dailyGains[stock.symbol.toUpperCase()] > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                                                {dailyGains[stock.symbol.toUpperCase()] > 0 ? '+$' : '-$'}{dailyGains[stock.symbol.toUpperCase()]}
+                                                {dailyGains[stock.symbol.toUpperCase()] > 0 ? '+$' : '-$'}{Math.abs(dailyGains[stock.symbol.toUpperCase()])}
                                             </td>
                                             <td className={`py-4 ${dailyGainPercentages[stock.symbol.toUpperCase()] > 0 ? 'text-green-600' : 'text-red-600'}`}>
                                                 {dailyGainPercentages[stock.symbol.toUpperCase()] > 0 ? '+' : ''}{Number(dailyGainPercentages[stock.symbol.toUpperCase()]).toFixed(2)}%

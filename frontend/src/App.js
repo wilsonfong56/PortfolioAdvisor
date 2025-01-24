@@ -22,7 +22,7 @@ function App() {
           >
               Logout
           </button>
-          <div className="flex flex-col lg:flex-row gap-6 max-w-7xl w-full">
+          <div className="flex flex-col lg:flex-row gap-6 max-w-9xl w-full">
               <div className="lg:flex-[2]">
                   <Portfolio
                       portfolio={portfolio}

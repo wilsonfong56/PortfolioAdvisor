@@ -2,13 +2,9 @@ from flask import jsonify, request
 import yfinance as yf
 from flask import Blueprint
 from .portfolio import add_stock_helper
-
-# In memory portfolio for testing
-portfolio = [
-    { "symbol": 'AAPL', "shares": 10, "price": 180.50 },
-    { "symbol": 'GOOGL', "shares": 5, "price": 140.25 }
-]
-
+from ...models.Stock import Stock
+from sqlalchemy import and_
+from ..shared import db
 portfolio_routes = Blueprint('portfolio_routes', __name__)
 
 @portfolio_routes.route('/')
@@ -23,24 +19,28 @@ def get_stock_price_history():
 
 @portfolio_routes.route('/portfolio', methods=['POST'])
 def add_stock():
-    global portfolio
     data = request.json
+    email = data.get("email")
     symbol = data.get("symbol")
     shares = data.get("shares")
     price = data.get("price")
-    portfolio = add_stock_helper(portfolio, symbol, int(shares), float(price))
+    add_stock_helper(email, symbol, int(shares), float(price))
+    portfolio = [stock.to_dict() for stock in Stock.query.filter(Stock.owner == email).all()]
     return jsonify({"message": "Stock added successfully", "portfolio": portfolio}), 201
 
 @portfolio_routes.route('/portfolio', methods=['GET'])
 def get_portfolio():
+    email = request.json.get("email")
+    portfolio = [stock.to_dict() for stock in Stock.query.filter(Stock.owner == email).all()]
     return jsonify({"portfolio": portfolio})
 
 @portfolio_routes.route('/portfolio', methods=['DELETE'])
 def delete_stock():
     data = request.json
+    email = data.get("email")
     symbol = data.get("symbol")
-    for item in portfolio:
-        if item['symbol'] == symbol:
-            portfolio.remove(item)
-            break
+    row = Stock.query.filter(and_(Stock.owner == email, Stock.symbol == symbol)).first()
+    db.session.delete(row)
+    db.session.commit()
+    portfolio = [stock.to_dict() for stock in Stock.query.filter(Stock.owner == email).all()]
     return jsonify({"message": "Stock deleted successfully", "portfolio": portfolio})

@@ -41,8 +41,9 @@ def login():
     if existing_user:
         correct_hashed_password = existing_user.password_hash
         if verify_password(password, correct_hashed_password):
-            session['email'] = email
-            return jsonify({"message": "Successful login"})
+            session["email"] = email
+            response = jsonify({"message": "Successful login"})
+            return response
 
     return jsonify({"message": "Unsuccessful login"})
 

@@ -11,6 +11,7 @@
     "dotenv": "^16.4.7",
     "dotenv-webpack": "^8.1.0",
     "finnhub": "^1.2.19",
+    "js-cookie": "^3.0.5",
     "langchain": "^0.3.11",
     "lucide-react": "^0.471.0",
     "openai": "^4.78.1",
