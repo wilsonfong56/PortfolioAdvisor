@@ -12,7 +12,9 @@ const Portfolio = ({ portfolio, setPortfolio, currentPrices, setCurrentPrices })
     // Fetch portfolio on component mount
     useEffect(() => {
         fetchPortfolio(Cookies.get("email"))
-            .then((res) => setPortfolio(res.data.portfolio))
+            .then((res) => {
+                setPortfolio(res.data.portfolio)
+            })
             .catch((err) => console.error(err));
     }, [setPortfolio]);
 
@@ -26,7 +28,7 @@ const Portfolio = ({ portfolio, setPortfolio, currentPrices, setCurrentPrices })
             for (const stock of portfolio) {
                 try {
                     const { price, dailyGain, dailyGainPercentage } = await get_quote(stock.symbol.toUpperCase());
-                    const totalGain = (parseFloat(price) - parseFloat(stock.price)) / parseFloat(stock.price);
+                    const totalGain = (parseFloat(price) - parseFloat(stock.price_bought)) / parseFloat(stock.price_bought);
                     newGainPercentages[stock.symbol.toUpperCase()] = totalGain;
                     newCurrentPrices[stock.symbol.toUpperCase()] = price;
                     newDailyGainPercentages[stock.symbol.toUpperCase()] = dailyGainPercentage;
@@ -54,6 +56,7 @@ const Portfolio = ({ portfolio, setPortfolio, currentPrices, setCurrentPrices })
 
     const handleAddStock = (e) => {
         e.preventDefault();
+        console.log(stock)
         addStock(stock, Cookies.get("email"))
             .then((response) => setPortfolio(response.data.portfolio))
             .catch((error) => console.log(error));
@@ -67,7 +70,7 @@ const Portfolio = ({ portfolio, setPortfolio, currentPrices, setCurrentPrices })
     };
 
     const calculateTotal = (stock) => {
-        return (parseFloat(stock.shares) * parseFloat(stock.price)).toFixed(2);
+        return (parseFloat(stock.shares) * parseFloat(stock.price_bought)).toFixed(2);
     };
 
     const calculateMarketValue = (stock) => {
@@ -148,7 +151,7 @@ const Portfolio = ({ portfolio, setPortfolio, currentPrices, setCurrentPrices })
                                         <tr key={stock.symbol} className="border-t">
                                             <td className="py-4 font-medium">{stock.symbol}</td>
                                             <td className="py-4">{stock.shares}</td>
-                                            <td className="py-4">${stock.price.toFixed(2)}</td>
+                                            <td className="py-4">${stock.price_bought.toFixed(2)}</td>
                                             <td className="py-4">${currentPrices[stock.symbol.toUpperCase()]}</td>
                                             <td className={`py-4 ${dailyGains[stock.symbol.toUpperCase()] > 0 ? 'text-green-600' : 'text-red-600'}`}>
                                                 {dailyGains[stock.symbol.toUpperCase()] > 0 ? '+$' : '-$'}{Math.abs(dailyGains[stock.symbol.toUpperCase()])}
