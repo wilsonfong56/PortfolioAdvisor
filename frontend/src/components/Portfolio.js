@@ -4,7 +4,9 @@ import { get_quote } from "../utils.js";
 
 const Portfolio = ({ portfolio, setPortfolio, currentPrices, setCurrentPrices }) => {
     const [stock, setStock] = useState({symbol: '', shares: '', price: ''});
-    const [gainPercentages, setGainPercentages] = useState({});
+    const [totalGainPercentages, setTotalGainPercentages] = useState({});
+    const [dailyGainPercentages, setDailyGainPercentages] = useState({});
+    const [dailyGains, setDailyGains] = useState({});
 
     // Fetch portfolio on component mount
     useEffect(() => {
@@ -17,20 +19,27 @@ const Portfolio = ({ portfolio, setPortfolio, currentPrices, setCurrentPrices })
         const fetchGains = async () => {
             const newGainPercentages = {};
             const newCurrentPrices = {};
+            const newDailyGainPercentages = {}
+            const newDailyGains = {}
+
             for (const stock of portfolio) {
                 try {
-                    const currentPrice = await get_quote(stock.symbol.toUpperCase());
-                    const gain = (parseFloat(currentPrice) - parseFloat(stock.price)) / parseFloat(stock.price);
-                    newGainPercentages[stock.symbol.toUpperCase()] = gain;
-                    newCurrentPrices[stock.symbol.toUpperCase()] = currentPrice;
+                    const { price, dailyGain, dailyGainPercentage } = await get_quote(stock.symbol.toUpperCase());
+                    const totalGain = (parseFloat(price) - parseFloat(stock.price)) / parseFloat(stock.price);
+                    newGainPercentages[stock.symbol.toUpperCase()] = totalGain;
+                    newCurrentPrices[stock.symbol.toUpperCase()] = price;
+                    newDailyGainPercentages[stock.symbol.toUpperCase()] = dailyGainPercentage;
+                    newDailyGains[stock.symbol.toUpperCase()] = dailyGain;
                 } catch (error) {
                     console.error(`Error fetching quote for ${stock.symbol.toUpperCase()}:`, error);
                     newGainPercentages[stock.symbol.toUpperCase()] = null;
                     newCurrentPrices[stock.symbol.toUpperCase()] = null;
                 }
             }
-            setGainPercentages(newGainPercentages);
+            setTotalGainPercentages(newGainPercentages);
             setCurrentPrices(newCurrentPrices);
+            setDailyGainPercentages(newDailyGainPercentages);
+            setDailyGains(newDailyGains)
         };
 
         fetchGains();
@@ -65,7 +74,7 @@ const Portfolio = ({ portfolio, setPortfolio, currentPrices, setCurrentPrices })
     }
 
     return (
-        <div className="max-w-5xl mx-auto p-6">
+        <div className="max-w-7xl mx-auto p-6">
             <div className="bg-white rounded-lg shadow-md mb-8">
                 <div className="p-6 border-b border-gray-200">
                     <h2 className="text-2xl font-semibold">Add New Stock</h2>
@@ -122,14 +131,16 @@ const Portfolio = ({ portfolio, setPortfolio, currentPrices, setCurrentPrices })
                             <div className="overflow-x-auto">
                                 <table className="w-full">
                                     <thead>
-                                        <tr className="text-left text-sm text-gray-500">
-                                            <th className="pb-4">Symbol</th>
-                                            <th className="pb-4">Shares</th>
-                                            <th className="pb-4">Cost Avg</th>
-                                            <th className="pb-4">Current Price</th>
-                                            <th className="pb-4">Change (%)</th>
-                                            <th className="pb-4">Change ($)</th>
-                                        </tr>
+                                    <tr className="text-left text-sm text-gray-500">
+                                        <th className="pb-4">Symbol</th>
+                                        <th className="pb-4">Shares</th>
+                                        <th className="pb-4">Cost Avg</th>
+                                        <th className="pb-4">Current Price</th>
+                                        <th className="pb-4">Daily Change ($)</th>
+                                        <th className="pb-4">Daily Change (%)</th>
+                                        <th className="pb-4">Total Change (%)</th>
+                                        <th className="pb-4">Total Change ($)</th>
+                                    </tr>
                                     </thead>
                                     <tbody>
                                     {portfolio.map((stock) => (
@@ -138,8 +149,14 @@ const Portfolio = ({ portfolio, setPortfolio, currentPrices, setCurrentPrices })
                                             <td className="py-4">{stock.shares}</td>
                                             <td className="py-4">${stock.price.toFixed(2)}</td>
                                             <td className="py-4">${currentPrices[stock.symbol.toUpperCase()]}</td>
-                                            <td className={`py-4 ${gainPercentages[stock.symbol.toUpperCase()] > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                                                {gainPercentages[stock.symbol.toUpperCase()] > 0 ? '+' : ''}{(gainPercentages[stock.symbol.toUpperCase()] * 100).toFixed(2)}%
+                                            <td className={`py-4 ${dailyGains[stock.symbol.toUpperCase()] > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                                {dailyGains[stock.symbol.toUpperCase()] > 0 ? '+$' : '-$'}{dailyGains[stock.symbol.toUpperCase()]}
+                                            </td>
+                                            <td className={`py-4 ${dailyGainPercentages[stock.symbol.toUpperCase()] > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                                {dailyGainPercentages[stock.symbol.toUpperCase()] > 0 ? '+' : ''}{Number(dailyGainPercentages[stock.symbol.toUpperCase()]).toFixed(2)}%
+                                            </td>
+                                            <td className={`py-4 ${totalGainPercentages[stock.symbol.toUpperCase()] > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                                {totalGainPercentages[stock.symbol.toUpperCase()] > 0 ? '+' : ''}{(totalGainPercentages[stock.symbol.toUpperCase()] * 100).toFixed(2)}%
                                             </td>
                                             <td className={`py-4 ${(calculateMarketValue(stock) - calculateTotal(stock)) > 0 ? 'text-green-600' : 'text-red-600'}`}>
                                                 {(calculateMarketValue(stock) - calculateTotal(stock)) > 0 ? '+$' : '-$'}{Math.abs(calculateMarketValue(stock) - calculateTotal(stock)).toFixed(2)}
@@ -157,7 +174,7 @@ const Portfolio = ({ portfolio, setPortfolio, currentPrices, setCurrentPrices })
                                     </tbody>
                                 </table>
                             </div>
-                        )
+                    )
                     }
                 </div>
             </div>
