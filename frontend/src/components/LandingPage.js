@@ -30,7 +30,7 @@ const LandingPage = () => {
                         <div className="relative">
                             <div className="bg-white rounded-xl shadow-lg p-6">
                                 <img
-                                    src="DashboardPreview.png"
+                                    src="DashboardPreview.jpg"
                                     alt="Dashboard Preview"
                                     className="rounded-lg"
                                 />

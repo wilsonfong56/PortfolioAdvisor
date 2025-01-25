@@ -3,14 +3,20 @@ import Portfolio from "./components/Portfolio.js";
 import ChatInterface from "./components/ChatInterface.js";
 import './index.css';
 import {useNavigate} from "react-router-dom";
+import Cookies from "js-cookie";
 
 function App() {
     const [portfolio, setPortfolio] = useState([]);
     const [currentPrices, setCurrentPrices] = useState({});
     const navigate = useNavigate();
 
+    if (!Cookies.get('email')) {
+        navigate('/');
+    }
+
     const handleLogout = () => {
         //logout logic
+        Cookies.remove('email');
         navigate('/');
     }
 
