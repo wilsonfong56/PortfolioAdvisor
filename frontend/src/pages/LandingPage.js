@@ -1,5 +1,5 @@
 import React from 'react';
-import Header from "./Header.js";
+import Header from "../components/Header.js";
 import { TrendingUp, MessageSquare, Shield, Briefcase, ChevronRight } from 'lucide-react';
 import {Link} from "react-router-dom";
 

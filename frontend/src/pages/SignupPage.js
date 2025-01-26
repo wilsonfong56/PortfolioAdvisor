@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import Header from "./Header.js";
+import Header from "../components/Header.js"
 import {TrendingUp} from "lucide-react";
 import {Link, useNavigate} from "react-router-dom";
 import { registerUser } from "../api/api.js";
