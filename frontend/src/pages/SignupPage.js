@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import Header from "../components/Header.js"
+import IndexHeader from "../components/IndexHeader.js"
 import {TrendingUp} from "lucide-react";
 import {Link, useNavigate} from "react-router-dom";
 import { registerUser } from "../api/api.js";
@@ -44,7 +44,7 @@ const SignupPage = () => {
 
     return (
         <>
-            <Header/>
+            <IndexHeader/>
             <div className="pt-24 pb-8 md:pt-32 max-w-7xl mx-auto px-4 sm:px-6">
                 <div className="sm:mx-auto sm:w-full sm:max-w-md">
                     <div className="flex justify-center">

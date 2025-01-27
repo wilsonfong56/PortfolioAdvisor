@@ -1,12 +1,12 @@
 import React from 'react';
-import Header from "../components/Header.js";
+import IndexHeader from "../components/IndexHeader.js";
 import { TrendingUp, MessageSquare, Shield, Briefcase, ChevronRight } from 'lucide-react';
 import {Link} from "react-router-dom";
 
 const LandingPage = () => {
     return (
         <div className="min-h-screen bg-gray-50">
-           <Header />
+           <IndexHeader />
             {/* Hero Section */}
             <section className="pt-24 pb-16 bg-gradient-to-br from-blue-50 to-white">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
