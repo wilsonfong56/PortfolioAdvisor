@@ -14,7 +14,7 @@ load_dotenv()
 
 def create_app():
     app = Flask(__name__)
-    CORS(app, supports_credentials=True, origins=["http://localhost:3000"])
+    CORS(app, supports_credentials=True, origins="http://localhost:3000")
 
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -26,11 +26,11 @@ def create_app():
     app.config["SESSION_COOKIE_SAMESITE"] = "None"  # For cross-origin cookies
     app.config["SESSION_COOKIE_SECURE"] = False
     with app.app_context():
-        db.create_all()
+        # db.create_all()
         app.register_blueprint(authentication_routes)
         app.register_blueprint(test_routes)
         app.register_blueprint(portfolio_routes)
         app.register_blueprint(chat_routes)
 
-    Session(app)
+    # Session(app)
     return app

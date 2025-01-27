@@ -22,7 +22,8 @@ def get_stock_news():
     data = request.args
     symbol = data.get("symbol")
     news = yf.Ticker(symbol).news
-    return jsonify(news=news)
+    response = jsonify(news=news)
+    return response
 
 @portfolio_routes.route('/portfolio', methods=['POST'])
 def add_stock():
