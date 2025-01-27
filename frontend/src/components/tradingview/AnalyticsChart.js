@@ -13,7 +13,7 @@ function AnalyticsChart() {
             script.innerHTML = `
 			{
 			  "autosize": true,
-			  "symbol": "NASDAQ:AAPL",
+			  "symbol": "SPY",
 			  "interval": "D",
 			  "timezone": "exchange",
 			  "theme": "light",

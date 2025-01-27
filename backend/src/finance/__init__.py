@@ -17,6 +17,13 @@ def get_stock_price_history():
     stock_df = yf.Ticker(symbol).history(period="max")
     return jsonify(stock_df.to_json(orient="records"))
 
+@portfolio_routes.route('/news', methods=['GET'])
+def get_stock_news():
+    data = request.args
+    symbol = data.get("symbol")
+    news = yf.Ticker(symbol).news
+    return jsonify(news=news)
+
 @portfolio_routes.route('/portfolio', methods=['POST'])
 def add_stock():
     data = request.json

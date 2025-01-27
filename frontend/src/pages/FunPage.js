@@ -1,11 +1,24 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import TradingViewStockHeatmap from "../components/tradingview/StockHeatmap.js";
 import TradingViewCryptoHeatmap from "../components/tradingview/CryptoHeatmap.js";
 import NewsWidget from "../components/tradingview/NewsWidget.js";
 import TradingViewAnalyticsChart from "../components/tradingview/AnalyticsChart.js";
 import AppHeader from "../components/AppHeader.js";
+import {getStockNews} from "../api/api.js";
 
 const FunPage = () => {
+    const [news, setNews] = useState([]);
+
+    useEffect(() => {
+        getStockNews("AAPL")
+            .then((res) => {
+                setNews(res.data.news);
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+    }, []);
+
     return (
         <>
             <AppHeader />
@@ -28,7 +41,7 @@ const FunPage = () => {
                     <TradingViewAnalyticsChart/>
                 </div>
                 <div className="lg:flex-[1] h-[600px]">
-                    <NewsWidget/>
+                    <NewsWidget newsItems={news}/>
                 </div>
             </div>
         </>
