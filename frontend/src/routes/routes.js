@@ -3,7 +3,8 @@ import App from "../App.js";
 import LandingPage from "../pages/LandingPage.js";
 import LoginPage from "../pages/LoginPage.js";
 import SignupPage from "../pages/SignupPage.js";
-import FunPage from "../pages/FunPage.js";
+import HeatmapPage from "../pages/HeatmapPage.js";
+import ChartPage from "../pages/ChartPage.js";
 
 const AppRoutes = () => {
     return (
@@ -13,7 +14,8 @@ const AppRoutes = () => {
                 <Route path="/app" element={<App />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/signup" element={<SignupPage />} />
-                <Route path="/fun" element={<FunPage />} />
+                <Route path="/maps" element={<HeatmapPage />} />
+                <Route path="/chart" element={<ChartPage />} />
             </Routes>
         </BrowserRouter>
     )

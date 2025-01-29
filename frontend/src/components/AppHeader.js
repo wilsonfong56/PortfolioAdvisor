@@ -14,10 +14,10 @@ function AppHeader() {
     return (
         <>
             <header className="absolute w-full bg-white/80 backdrop-blur-md border-b border-gray-100 z-50">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6">
-                    <div className="flex justify-between items-center py-4">
+                <div className="max-w-7xl mx-auto px-2">
+                    <div className="flex justify-between items-center py-3">
                         {/* Logo */}
-                        <div className="flex items-center">
+                        <div className="flex items-center absolute left-4">
                             <a href="/app" className="flex items-center space-x-2">
                                 <BadgeDollarSign className="h-8 w-8 text-indigo-600"/>
                                 <span
@@ -27,12 +27,12 @@ function AppHeader() {
                             </a>
                         </div>
 
-                        <nav className="hidden md:flex items-center space-x-8">
-                            <a href="/fun" className="text-gray-600 hover:text-indigo-600 transition-colors">
-                                Fun
+                        <nav className="hidden md:flex items-center space-x-8 ml-auto">
+                            <a href="/maps" className="text-gray-600 hover:text-indigo-600 transition-colors">
+                                Maps
                             </a>
-                            <a href="/" className="text-gray-600 hover:text-indigo-600 transition-colors">
-                                Contact
+                            <a href="/chart" className="text-gray-600 hover:text-indigo-600 transition-colors">
+                                Chart
                             </a>
                             <button
                                 className="bg-indigo-600 text-white px-6 py-2 rounded-full hover:bg-indigo-700 transition-colors flex items-center space-x-2"

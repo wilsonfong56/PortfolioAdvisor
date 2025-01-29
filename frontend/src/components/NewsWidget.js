@@ -13,10 +13,10 @@ const NewsWidget = ({ newsItems }) => {
     };
 
     return (
-        <div className="w-full max-w-3xl">
-            <div className="bg-white rounded-lg shadow-lg p-6">
-                <h2 className="text-2xl font-bold mb-6">Market News</h2>
-                <div className="space-y-6">
+        <div className="w-full h-full max-w-3xl">
+            <div className="bg-white h-full rounded-lg shadow-lg p-6">
+                <h2 className="font-bold mb-6">Market News</h2>
+                <div className="space-y-6 h-[90%] overflow-y-auto">
                     {newsItems.map((item) => (
                         <div
                             key={item.uuid}
