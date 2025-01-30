@@ -1,9 +1,8 @@
-// TradingViewWidget.jsx
 import React, { useEffect, useRef, memo } from 'react';
 
-function AnalyticsChart() {
+function AnalyticsChart({ ticker }) {
     const container = useRef();
-
+    console.log(ticker)
     useEffect(
         () => {
             const script = document.createElement("script");
@@ -13,7 +12,7 @@ function AnalyticsChart() {
             script.innerHTML = `
 			{
 			  "autosize": true,
-			  "symbol": "SPY",
+			  "symbol": "${ticker}",
 			  "interval": "D",
 			  "timezone": "exchange",
 			  "theme": "light",
