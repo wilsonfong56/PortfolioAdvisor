@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, memo } from 'react';
 
-function AnalyticsChart({ ticker }) {
+function TaChart({ ticker }) {
     const container = useRef();
-    console.log(ticker)
+
     useEffect(
         () => {
             const script = document.createElement("script");
@@ -14,20 +14,20 @@ function AnalyticsChart({ ticker }) {
 			  "autosize": true,
 			  "symbol": "${ticker}",
 			  "interval": "D",
+			  "support_host": "https://www.tradingview.com",
 			  "timezone": "exchange",
 			  "theme": "light",
 			  "style": "1",
-			  "locale": "en",
-			  "allow_symbol_change": true,
-			  "calendar": false,
 			  "withdateranges": true,
-			  "allow_symbol_change": true,
 			  "hide_side_toolbar": false,
+			  "allow_symbol_change": true,
 			  "save_image": false,
-			  "details": true,
-			  "hotlist": true,
-			  "calendar": false,
-			  "support_host": "https://www.tradingview.com"
+			  "studies": [
+				"MASimple@tv-basicstudies"
+			  ],
+			  "show_popup_button": true,
+			  "popup_width": "1000",
+			  "popup_height": "650"
 			}`;
             container.current.appendChild(script);
         },
@@ -42,4 +42,4 @@ function AnalyticsChart({ ticker }) {
     );
 }
 
-export default memo(AnalyticsChart);
+export default memo(TaChart);

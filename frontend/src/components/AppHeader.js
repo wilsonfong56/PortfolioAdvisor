@@ -29,10 +29,13 @@ function AppHeader() {
 
                         <nav className="hidden md:flex items-center space-x-8 ml-auto">
                             <a href="/maps" className="text-gray-600 hover:text-indigo-600 transition-colors">
-                                Maps
+                                Heat Maps
                             </a>
                             <a href="/chart" className="text-gray-600 hover:text-indigo-600 transition-colors">
-                                Chart
+                                TA Center
+                            </a>
+                            <a href="/charts" className="text-gray-600 hover:text-indigo-600 transition-colors">
+                                Holdings Summary
                             </a>
                             <button
                                 className="bg-indigo-600 text-white px-6 py-2 rounded-full hover:bg-indigo-700 transition-colors flex items-center space-x-2"

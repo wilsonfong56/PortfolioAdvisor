@@ -18,7 +18,7 @@ function App() {
     return (
         <>
             <AppHeader/>
-            <div className="flex justify-center items-center min-h-screen">
+            <div className="flex justify-center items-center min-h-screen pt-[50px]">
                   <div className="flex flex-col lg:flex-row gap-6 max-w-9xl w-full">
                       <div className="lg:flex-[2]">
                           <Portfolio
