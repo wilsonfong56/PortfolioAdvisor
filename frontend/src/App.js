@@ -1,19 +1,19 @@
-import React, { useState } from 'react';
+import React, {useContext} from 'react';
 import Portfolio from "./components/Portfolio.js";
 import ChatInterface from "./components/ChatInterface.js";
 import './index.css';
 import {useNavigate} from "react-router-dom";
 import Cookies from "js-cookie";
 import AppHeader from "./components/AppHeader.js";
+import {PortfolioContext} from "./components/PortfolioContext.js";
 
 function App() {
-    const [portfolio, setPortfolio] = useState([]);
-    const [currentPrices, setCurrentPrices] = useState({});
     const navigate = useNavigate();
+    const { portfolio, setPortfolio, currentPrices, setCurrentPrices } = useContext(PortfolioContext);
 
-    // if (!Cookies.get('email')) {
-    //     navigate('/');
-    // }
+    if (!Cookies.get('email')) {
+        navigate('/');
+    }
 
     return (
         <>

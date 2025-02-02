@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { addStock, deleteStock, fetchPortfolio } from "../api/api.js";
+import { addStock, deleteStock } from "../api/api.js";
 import { get_quote } from "../utils.js";
 import Cookies from "js-cookie";
 
@@ -9,14 +9,6 @@ const Portfolio = ({ portfolio, setPortfolio, currentPrices, setCurrentPrices })
     const [dailyGainPercentages, setDailyGainPercentages] = useState({});
     const [dailyGains, setDailyGains] = useState({});
 
-    // Fetch portfolio on component mount
-    useEffect(() => {
-        fetchPortfolio(Cookies.get("email"))
-            .then((res) => {
-                setPortfolio(res.data.portfolio)
-            })
-            .catch((err) => console.error(err));
-    }, [setPortfolio]);
 
     useEffect(() => {
         const fetchGains = async () => {
