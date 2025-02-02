@@ -33,20 +33,17 @@ const ChatInterface = ({ portfolio, currentPrices }) => {
         const userMessage = {text: inputText, sender: 'user'};
         setMessages((prev) => [...prev, userMessage]);
         setIsLoading(true);
-        let botResponse;
-        const userQuery = inputText.toLowerCase();
         setInputText('');
         let docContext = "";
 
         // Create embedding for the user query
         const embedding = await openai.embeddings.create({
             model: "text-embedding-3-small",
-            input: userQuery,
+            input: userMessage.text,
             encoding_format: "float"
         });
 
         try {
-            // Query Flask backend
             const payload = { embedding: embedding.data[0].embedding };
             const response = await handleChat(payload);
 
@@ -65,16 +62,17 @@ const ChatInterface = ({ portfolio, currentPrices }) => {
             If the context lacks specific information relevant to the user's query, provide advice based on the knowledge of financial markets, avoiding generic advice. 
             Avoid discussing unrelated topics such as broad economic indicators unless directly relevant to the user's portfolio or specific stocks.
             Remove all formatting and respond with plain text. Assume start context is always current and up to date.
-        ----------------------
-        START CONTEXT
-        ${docContext}
-        END CONTEXT
-        ----------------------
-        USER'S PORTFOLIO: Portfolio (w/ cost basis)-${JSON.stringify(portfolio)}; Current prices of stocks-${JSON.stringify(currentPrices)}
-        USER QUERY: ${userQuery}
-        ----------------------
-        `
+            ----------------------
+            START CONTEXT
+            ${docContext}
+            END CONTEXT
+            ----------------------
+            USER'S PORTFOLIO: Portfolio (w/ cost basis)-${JSON.stringify(portfolio)}; Current prices of stocks-${JSON.stringify(currentPrices)}
+            USER QUERY: ${userMessage.text}
+            ----------------------
+            `
         };
+
         const filteredMessages = messages
             .filter(message => message.sender === 'user')
             .map(message => ({
@@ -82,28 +80,40 @@ const ChatInterface = ({ portfolio, currentPrices }) => {
                 content: message.text
             }));
 
-        const response = await openai.chat.completions.create({
-            model: "gpt-4",
-            stream: false,
-            messages: [template, ...filteredMessages]
-        });
+        try {
+            const response = await openai.chat.completions.create({
+                model: "gpt-4",
+                stream: true,
+                messages: [template, ...filteredMessages]
+            }, { responseType: 'stream' });
 
-        botResponse = response.choices[0]?.message?.content || "I'm unable to provide a response at this time.";
-
-        setTimeout(() => {
-            setMessages(prev => [...prev, { text: botResponse, sender: 'bot' }]);
+            let botMessage = '';
+            for await (const chunk of response.data) {
+                botMessage += chunk.choices[0]?.delta?.content || '';
+                setMessages(prev => {
+                    const lastMessage = prev[prev.length - 1];
+                    if (lastMessage.sender === 'bot') {
+                        return [...prev.slice(0, -1), { text: botMessage, sender: 'bot' }];
+                    } else {
+                        return [...prev, { text: botMessage, sender: 'bot' }];
+                    }
+                });
+            }
+        } catch (error) {
+            console.error('Error streaming response:', error);
+            setMessages(prev => [...prev, { text: "I'm currently down for maintenance, please check back later. Sorry for the inconvenience. :(" , sender: 'bot' }]);
+        } finally {
             setIsLoading(false);
-        }, 1000);
-
+        }
     }
 
     function sanitizeHtml(input) {
         const allowedTags = ['strong', 'em', 'p', 'br']; // Customize allowed tags
         const parser = new DOMParser();
         const doc = parser.parseFromString(input, 'text/html');
-        Array.from(doc.body.getElementsByTagName('*')).forEach(el => {
-            if (!allowedTags.includes(el.tagName.toLowerCase())) {
-                el.remove();
+        Array.from(doc.body.getElementsByTagName('*')).forEach(elem => {
+            if (!allowedTags.includes(elem.tagName.toLowerCase())) {
+                elem.remove();
             }
         });
         return doc.body.innerHTML;
