@@ -19,8 +19,9 @@ const LoginPage = () => {
         loginUser(email, password)
             .then((response) => {
                 const message = response.data.message;
+                const accessToken = response.data.access_token;
                 if (message === "Successful login") {
-                    Cookies.set('email', email)
+                    Cookies.set('access_token', accessToken)
                     navigate('/app')
                 }
                 else if (message === "Unsuccessful login") {

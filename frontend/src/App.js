@@ -11,7 +11,7 @@ function App() {
     const navigate = useNavigate();
     const { portfolio, setPortfolio, currentPrices, setCurrentPrices } = useContext(PortfolioContext);
 
-    if (!Cookies.get('email')) {
+    if (!Cookies.get('access_token')) {
         navigate('/');
     }
 

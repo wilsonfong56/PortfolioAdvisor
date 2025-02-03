@@ -48,15 +48,14 @@ const Portfolio = ({ portfolio, setPortfolio, currentPrices, setCurrentPrices })
 
     const handleAddStock = (e) => {
         e.preventDefault();
-        console.log(stock)
-        addStock(stock, Cookies.get("email"))
+        addStock(stock, Cookies.get('access_token'))
             .then((response) => setPortfolio(response.data.portfolio))
             .catch((error) => console.log(error));
         setStock({symbol: '', shares: '', price: ''});
     };
 
     const handleDeleteStock = (symbol) => {
-        deleteStock(symbol, Cookies.get("email"))
+        deleteStock(symbol, Cookies.get('access_token'))
             .then((response) => setPortfolio(response.data.portfolio))
             .catch((error) => console.log(error));
     };

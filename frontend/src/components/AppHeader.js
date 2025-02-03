@@ -7,8 +7,7 @@ function AppHeader() {
     const navigate = useNavigate();
 
     const handleLogout = () => {
-        //logout logic
-        Cookies.remove('email');
+        Cookies.remove('access_token');
         navigate('/');
     }
     return (

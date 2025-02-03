@@ -5,13 +5,22 @@ const API = axios.create({
     credentials: 'omit'
 });
 
-export const fetchPortfolio = (email) => API.get('/portfolio', {
+export const fetchPortfolio = (token) => API.get('/portfolio', {
     headers: {
+        Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
-    },
-    params: { email: email }});
-export const addStock = (stock, email) => API.post('/portfolio', { stock, email });
-export const deleteStock = (symbol, email) => API.delete('/portfolio', { params: { symbol, email } });
+    }});
+export const addStock = (stock, token) => API.post('/portfolio', { stock }, {
+    headers: {
+        Authorization: `Bearer ${token}`,
+    }
+});
+export const deleteStock = (symbol, token) => API.delete('/portfolio', {
+    data: { symbol },
+    headers: {
+        Authorization: `Bearer ${token}`,
+    }
+});
 export const getStockNews = (symbol) => API.get('/news', { params : { symbol: symbol }})
 export const handleChat = (payload) => API.post('/query', payload, {
     headers: {

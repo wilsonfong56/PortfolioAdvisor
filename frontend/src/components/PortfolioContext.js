@@ -9,7 +9,7 @@ export const PortfolioProvider = ({ children }) => {
     const [currentPrices, setCurrentPrices] = useState({});
 
     useEffect(() => {
-        fetchPortfolio(Cookies.get("email"))
+        fetchPortfolio(Cookies.get('access_token'))
             .then((res) => {
                 setPortfolio(res.data.portfolio)
             })

@@ -1,6 +1,6 @@
 import os
 from flask import Flask
-from flask_session import Session
+from flask_jwt_extended import JWTManager
 from backend.src.routes import test_routes
 from backend.src.shared import db
 from backend.src.finance import portfolio_routes
@@ -18,13 +18,9 @@ def create_app():
 
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
+    app.config['JWT_SECRET_KEY'] = os.getenv("SECRET_KEY")
+    JWTManager(app)
     db.init_app(app)
-    app.config['SESSION_TYPE'] = 'sqlalchemy'
-    app.config['SESSION_SQLALCHEMY'] = db
-    app.config["SESSION_COOKIE_HTTPONLY"] = True
-    app.config["SESSION_COOKIE_SAMESITE"] = "None"  # For cross-origin cookies
-    app.config["SESSION_COOKIE_SECURE"] = False
     with app.app_context():
         # db.create_all()
         app.register_blueprint(authentication_routes)
@@ -32,5 +28,4 @@ def create_app():
         app.register_blueprint(portfolio_routes)
         app.register_blueprint(chat_routes)
 
-    # Session(app)
     return app

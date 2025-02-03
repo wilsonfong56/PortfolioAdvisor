@@ -10,7 +10,7 @@ import Cookies from "js-cookie";
 const ChartsPage = () => {
     const navigate = useNavigate();
 
-    if (!Cookies.get('email')) {
+    if (!Cookies.get('access_token')) {
         navigate('/');
     }
 
