@@ -22,7 +22,7 @@ def create_app():
     JWTManager(app)
     db.init_app(app)
     with app.app_context():
-        # db.create_all()
+        db.create_all()
         app.register_blueprint(authentication_routes)
         app.register_blueprint(test_routes)
         app.register_blueprint(portfolio_routes)
