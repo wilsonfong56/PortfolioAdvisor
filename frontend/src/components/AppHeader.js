@@ -40,13 +40,16 @@ function AppHeader() {
                                 <div
                                     className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200">
                                     <a href="/maps" className="block px-4 py-2 text-gray-600 hover:bg-indigo-100">
-                                    Heat Maps
+                                        Heat Maps
                                     </a>
                                     <a href="/chart" className="block px-4 py-2 text-gray-600 hover:bg-indigo-100">
                                         TA Center
                                     </a>
                                     <a href="/charts" className="block px-4 py-2 text-gray-600 hover:bg-indigo-100">
                                         Holdings Summary
+                                    </a>
+                                    <a href="/sentiment" className="block px-4 py-2 text-gray-600 hover:bg-indigo-100">
+                                        Market Sentiment
                                     </a>
                                     <button
                                         className="block w-full text-left px-4 py-2 text-gray-600 hover:bg-indigo-100"
