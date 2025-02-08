@@ -1,7 +1,6 @@
 import TradingViewStockHeatmap from "../components/tradingview/StockHeatmap.js";
 import TradingViewCryptoHeatmap from "../components/tradingview/CryptoHeatmap.js";
 import AppHeader from "../components/AppHeader.js";
-import FearGreedIndex from "../components/FearGreedIndex.js";
 
 const HeatmapPage = () => {
 

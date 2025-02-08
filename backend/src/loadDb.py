@@ -11,7 +11,7 @@ dotenv.load_dotenv()
 
 class WebScraper:
     def __init__(self):
-        self.openai_client = OpenAI(api_key=os.getenv('REACT_APP_OPENAI_API_KEY'))
+        self.openai_client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
 
         # Initialize text splitter
         self.text_splitter = RecursiveCharacterTextSplitter(
@@ -89,8 +89,7 @@ class WebScraper:
                             encoding_format="float"
                         )
 
-                        vector = embedding_response.data[0].embedding
-
+                        vector = embedding_response.data[0].embedding # length of 1536
                         self.vector_store.insert_one(
                             document={
                                 'text': chunk,
@@ -105,11 +104,23 @@ class WebScraper:
 
     async def run(self):
         """Main async execution method"""
-
         await self.scrape_and_embed(self.financial_data_sites())
+
+    async def delete_collection(self):
+        collection_name = self.vector_store.collection_name
+        self.vector_store.astra_db.delete_collection(collection_name)
+
+    async def create_collection(self):
+        collection_name = self.vector_store.collection_name
+        self.vector_store.astra_db.create_collection(collection_name,
+                                                     dimension=1536,
+                                                     metric='cosine')
+        print("Collection created")
 
 async def main():
     scraper = WebScraper()
+    await scraper.delete_collection()
+    await scraper.create_collection()
     await scraper.run()
 
 if __name__ == "__main__":

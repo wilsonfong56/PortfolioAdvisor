@@ -41,7 +41,7 @@ const HotList = () => {
             <div className="tradingview-widget-copyright">
                 <a
                     href="https://www.tradingview.com/"
-                    rel="noopener nofollow"
+                    rel="noopener nofollow noreferrer"
                     target="_blank"
                 >
                     <span className="blue-text">Track all markets on TradingView</span>
