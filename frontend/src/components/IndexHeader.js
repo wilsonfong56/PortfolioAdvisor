@@ -19,12 +19,12 @@ function IndexHeader() {
                         </div>
 
                         <nav className="hidden md:flex items-center space-x-8">
-                            <a href="/" className="text-gray-600 hover:text-indigo-600 transition-colors">
-                                About
-                            </a>
-                            <a href="/" className="text-gray-600 hover:text-indigo-600 transition-colors">
-                                Contact
-                            </a>
+                            {/*<a href="/" className="text-gray-600 hover:text-indigo-600 transition-colors">*/}
+                            {/*    About*/}
+                            {/*</a>*/}
+                            {/*<a href="/" className="text-gray-600 hover:text-indigo-600 transition-colors">*/}
+                            {/*    Contact*/}
+                            {/*</a>*/}
                             <a
                                 href="/login"
                                 className="bg-indigo-600 text-white px-6 py-2 rounded-full hover:bg-indigo-700 transition-colors flex items-center space-x-2"
