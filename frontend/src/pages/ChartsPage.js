@@ -31,12 +31,11 @@ const ChartsPage = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
                     {portfolio.map((stock) => (
                         <div key={stock.symbol} className="h-[700px] md:h-[800px] w-auto">
-                            {/* Rectangular Chart */}
+
                             <div className="h-[350px] w-full">
                                 <SimpleChart ticker={stock.symbol}/>
                             </div>
 
-                            {/* Flex Container for StockTrend & CompanyProfile */}
                             <div className="flex flex-row gap-4 h-[calc(100%-350px)]">
                                 <div className="w-1/2 flex-grow">
                                     <CompanyProfile ticker={stock.symbol}/>

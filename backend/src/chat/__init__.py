@@ -1,15 +1,13 @@
 from flask import jsonify, request, Blueprint
-from astrapy.db import AstraDB
 import os
 from dotenv import load_dotenv
+from astrapy import DataAPIClient
+
 
 load_dotenv()
-
-astra_db = AstraDB(
-    token=os.getenv("ASTRA_DB_TOKEN"),
-    api_endpoint=os.getenv("ASTRA_DB_ENDPOINT")
-)
-collection = astra_db.collection(os.getenv("ASTRA_DB_COLLECTION"))
+client = DataAPIClient(os.getenv("ASTRA_DB_TOKEN"))
+db = client.get_database_by_api_endpoint(os.getenv("ASTRA_DB_ENDPOINT"))
+collection = db.get_collection(os.getenv("ASTRA_DB_COLLECTION"))
 
 chat_routes = Blueprint('chat_routes', __name__)
 
@@ -21,7 +19,7 @@ def vector_search():
         if not embedding:
             return jsonify({"error": "No embedding provided"}), 400
 
-        results = collection.vector_find(
+        results = collection.find(
             vector=embedding,
             limit=10
         )

@@ -9,16 +9,6 @@ from ..shared import db
 
 portfolio_routes = Blueprint('portfolio_routes', __name__)
 
-@portfolio_routes.route('/')
-def home():
-    return jsonify({"message": "Server is running"})
-
-# @portfolio_routes.route('/stock', methods=['GET'])
-# def get_stock_price_history():
-#     symbol = request.args.get('symbol')
-#     stock_df = yf.Ticker(symbol).history(period="max")
-#     return jsonify(stock_df.to_json(orient="records"))
-
 @portfolio_routes.route('/news', methods=['GET'])
 def get_stock_news():
     data = request.args

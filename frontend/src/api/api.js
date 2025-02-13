@@ -10,11 +10,13 @@ export const fetchPortfolio = (token) => API.get('/portfolio', {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
     }});
-export const addStock = (stock, token) => API.post('/portfolio', { stock }, {
-    headers: {
-        Authorization: `Bearer ${token}`,
-    }
-});
+export const addStock = (stock, token) => API.post('/portfolio',
+    { stock },
+    {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        }
+    });
 export const deleteStock = (symbol, token) => API.delete('/portfolio', {
     data: { symbol },
     headers: {
@@ -28,4 +30,5 @@ export const handleChat = (payload) => API.post('/query', payload, {
     },
 });
 export const registerUser = (name, email, password) => API.post('/register', { name, email, password });
-export const loginUser = (email, password) => API.post('/login', { email, password })
+export const loginUser = (email, password) => API.post('/login', { email, password });
+export const sendFeedback = (feedback) => API.post('/submitFeedback', { feedback });
