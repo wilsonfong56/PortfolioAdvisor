@@ -14,9 +14,7 @@ import FeedbackPage from "../pages/FeedbackPage.js";
 const AppRoutes = () => {
     return (
         <BrowserRouter>
-            <PortfolioProvider>
-                <AppHeader />
-            </PortfolioProvider>
+            <AppHeader />
             <Routes>
                 <Route path="/" element={<LandingPage />} />
                 <Route
