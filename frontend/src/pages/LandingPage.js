@@ -13,7 +13,7 @@ const LandingPage = () => {
                     <div className="lg:grid lg:grid-cols-2 lg:gap-8 items-center">
                         <div className="mb-12 lg:mb-0">
                             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-                                Intelligent Stock Portfolio Management with AI
+                                AI Stock Portfolio Management
                             </h1>
                             <p className="text-xl text-gray-600 mb-8">
                                 Make smarter investment decisions with real-time AI insights, market analysis, and institutional investor data.
