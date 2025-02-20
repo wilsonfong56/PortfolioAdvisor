@@ -7,7 +7,7 @@ from backend.src import loadDb
 from backend.src.feedback import feedback_routes
 from backend.src.loadDb import WebScraper
 from backend.src.shared import db, mail
-from backend.src.finance import portfolio_routes
+from backend.src.portfolio import portfolio_routes
 from backend.src.chat import chat_routes
 from backend.src.authentication import authentication_routes
 from backend.models import User, Stock
