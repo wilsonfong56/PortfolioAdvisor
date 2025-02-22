@@ -5,6 +5,7 @@ from flask import Flask
 from flask_jwt_extended import JWTManager
 from backend.src import loadDb
 from backend.src.feedback import feedback_routes
+from backend.src.holdings import holdings_routes
 from backend.src.loadDb import WebScraper
 from backend.src.shared import db, mail
 from backend.src.portfolio import portfolio_routes
@@ -44,5 +45,6 @@ def create_app():
         app.register_blueprint(portfolio_routes)
         app.register_blueprint(chat_routes)
         app.register_blueprint(feedback_routes)
+        app.register_blueprint(holdings_routes)
     scheduler.start()
     return app
