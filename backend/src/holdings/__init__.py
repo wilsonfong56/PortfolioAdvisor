@@ -7,21 +7,29 @@ holdings_routes = Blueprint('holdings_routes', __name__)
 @holdings_routes.route('/getPeers', methods=['GET'])
 def getPeers():
     data = request.json
-    symbol = data.get("symbol")
-    print(f'Symbol: {symbol}')
-    peers = helpers.getPeers(symbol)
-    return jsonify(peers=peers)
+    symbols = data.get("symbols")
+    peers_dict = {}
+    for symbol in symbols:
+        peers = helpers.getPeers(symbol)
+        peers_dict[symbol] = peers
+    return jsonify(peers=peers_dict)
 
 @holdings_routes.route('/getIndustry', methods=['GET'])
 def getIndustry():
     data = request.json
-    symbol = data.get("symbol")
-    industry = helpers.getIndustry(symbol)
-    return jsonify(industry=industry)
+    symbols = data.get("symbols")
+    industry_dict = {}
+    for symbol in symbols:
+        industry = helpers.getIndustry(symbol)
+        industry_dict[symbol] = industry
+    return jsonify(industry=industry_dict)
 
 @holdings_routes.route('/getInsiderTrans', methods=['GET'])
 def getInsiderTrans():
     data = request.json
-    symbol = data.get("symbol")
-    transactions = helpers.getInsiderTransactions(symbol)
-    return jsonify(transactions=transactions)
+    symbols = data.get("symbols")
+    trans_dict = {}
+    for symbol in symbols:
+        transactions = helpers.getInsiderTransactions(symbol)
+        trans_dict[symbol] = transactions
+    return jsonify(transactions=trans_dict)

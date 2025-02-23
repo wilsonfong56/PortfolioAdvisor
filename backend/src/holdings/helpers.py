@@ -6,33 +6,12 @@ load_dotenv()
 finnhub_client = finnhub.Client(api_key=os.getenv("FINNHUB_API_KEY"))
 
 def getPeers(symbol):
-    return finnhub_client.company_peers(symbol)
+    peers = finnhub_client.company_peers(symbol)
+    peers.remove(symbol)
+    return peers
 
 def getIndustry(symbol):
-    """
-    :param symbol:
-    :return:
-    """
-
-    """
-    sample response:
-    {
-        "country": "US",
-        "currency": "USD",
-        "estimateCurrency": "USD",
-        "exchange": "NEW YORK STOCK EXCHANGE, INC.",
-        "finnhubIndustry": "Technology",
-        "ipo": "2020-09-30",
-        "logo": "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/PLTR.png",
-        "marketCapitalization": 237701.89237323985,
-        "name": "Palantir Technologies Inc",
-        "phone": "17203583679",
-        "shareOutstanding": 2277.02,
-        "ticker": "PLTR",
-        "weburl": "https://www.palantir.com/"
-    }
-    """
-    return finnhub_client.company_profile2(symbol=symbol)
+    return finnhub_client.company_profile2(symbol=symbol)["finnhubIndustry"]
 
 def getInsiderTransactions(symbol):
     transactions = finnhub_client.stock_insider_transactions(symbol, "2025-01-01")["data"]
