@@ -32,3 +32,6 @@ export const handleChat = (payload) => API.post('/query', payload, {
 export const registerUser = (name, email, password) => API.post('/register', { name, email, password });
 export const loginUser = (email, password) => API.post('/login', { email, password });
 export const sendFeedback = (feedback) => API.post('/submitFeedback', { feedback });
+export const getPeers = (symbols) => API.get('/getPeers', { data: symbols })
+export const getIndustry = (symbols) => API.get('/getIndustry', { data: symbols })
+export const getInsiderTrans = (symbols) => API.get('/getInsiderTrans', { data: symbols })
