@@ -1,5 +1,4 @@
-import os
-import finnhub
+import os, requests, finnhub
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -11,7 +10,18 @@ def getPeers(symbol):
     return peers
 
 def getIndustry(symbol):
-    return finnhub_client.company_profile2(symbol=symbol)["finnhubIndustry"]
+    company_profile = finnhub_client.company_profile2(symbol=symbol)
+    return company_profile["finnhubIndustry"]
+
+def getExchangeAndName(symbol):
+    url = f"https://financialmodelingprep.com/api/v3/search?query={symbol}&apikey={os.getenv("FMP_API_KEY")}"
+    response = requests.get(url)
+
+    if response.status_code == 200:
+        data = response.json()
+        return data[0]["exchangeShortName"], data[0]["name"]
+    else:
+        return f"Error: {response.status_code}"
 
 def getInsiderTransactions(symbol):
     transactions = finnhub_client.stock_insider_transactions(symbol, "2025-01-01")["data"]
@@ -30,9 +40,34 @@ def getInsiderTransactions(symbol):
 
     return cleaned_up_transactions
 
+def getRecommendations(symbols):
+    recommendations = {}
+    for symbol in symbols:
+        industry = getIndustry(symbol)
+        exchange, name = getExchangeAndName(symbol)
+        peers = getPeers(symbol)
+        if industry not in recommendations:
+            recommendations[industry] = []
+        recommendations[industry].append({"s": exchange+":"+symbol,
+                                          "d": name})
+        for peer in peers:
+            exchange, name = getExchangeAndName(peer)
+            recommendations[industry].append({"s": exchange+":"+peer,
+                                              "d": name})
+    # Converting to JSON array for React component
+    recommendations = [
+        {
+            "title": industry,
+            "symbols": symbols
+        }
+        for industry, symbols in recommendations.items()
+    ]
+    return recommendations
 
 
 if __name__ == "__main__":
-    print(getPeers("AAPL"))
-    # print(getIndustry("TECH"))
+    #print(getPeers("AAPL"))
+    # print(getExchangeAndName("AAPL"))
+    #print(getIndustry("TECH"))
     # print(getInsiderTransactions("SLDB"))
+    print(getRecommendations(["AAPL"]))
