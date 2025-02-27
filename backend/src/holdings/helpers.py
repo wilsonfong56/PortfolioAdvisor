@@ -1,59 +1,68 @@
 import os, requests, finnhub
 from dotenv import load_dotenv
+import asyncio
+import aiohttp
 
 load_dotenv()
 finnhub_client = finnhub.Client(api_key=os.getenv("FINNHUB_API_KEY"))
 
-def getPeers(symbol):
-    peers = finnhub_client.company_peers(symbol)
-    peers.remove(symbol)
-    return peers
+async def getPeers(symbol):
+    return await asyncio.to_thread(lambda: [peer for peer in finnhub_client.company_peers(symbol) if peer != symbol])
 
-def getIndustry(symbol):
-    company_profile = finnhub_client.company_profile2(symbol=symbol)
-    return company_profile["finnhubIndustry"]
+async def getIndustry(symbol):
+    return await asyncio.to_thread(lambda: finnhub_client.company_profile2(symbol=symbol)["finnhubIndustry"])
 
-def getExchangeAndName(symbol):
+async def getExchangeAndName(symbol):
     url = f"https://financialmodelingprep.com/api/v3/search?query={symbol}&apikey={os.getenv("FMP_API_KEY")}"
-    response = requests.get(url)
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as response:
+            if response.status == 200:
+                data = await response.json()
+                return data[0]["exchangeShortName"], data[0]["name"]
+            else:
+                return "Error", f"Error: {response.status}"
 
-    if response.status_code == 200:
-        data = response.json()
-        return data[0]["exchangeShortName"], data[0]["name"]
-    else:
-        return f"Error: {response.status_code}"
-
-def getInsiderTransactions(symbol):
-    transactions = finnhub_client.stock_insider_transactions(symbol, "2025-01-01")["data"]
-    cleaned_up_transactions = []
-    for transaction in transactions:
-        code = transaction['transactionCode']
-        if code == 'P' or code == 'S':
-            name = transaction['name']
-            date = transaction['transactionDate']
-            shareChange = transaction['change']
-            price = transaction['transactionPrice']
-            transactionAmt = shareChange*price
-            cleaned_up_transactions.append({'name': name,
-                                             'date': date,
-                                             'amount': transactionAmt})
+async def getInsiderTransactions(symbol):
+    transactions = await asyncio.to_thread(lambda: finnhub_client.stock_insider_transactions(symbol, "2025-01-01")["data"])
+    cleaned_up_transactions = [
+        {
+            'name': transaction['name'],
+            'date': transaction['transactionDate'],
+            'amount': transaction['change'] * transaction['transactionPrice']
+        }
+        for transaction in transactions if transaction['transactionCode'] in ['P', 'S']
+    ]
 
     return cleaned_up_transactions
 
-def getRecommendations(symbols):
+async def getRecommendations(symbols):
     recommendations = {}
-    for symbol in symbols:
-        industry = getIndustry(symbol)
-        exchange, name = getExchangeAndName(symbol)
-        peers = getPeers(symbol)
+    industry_tasks = [getIndustry(symbol) for symbol in symbols]
+    exchange_name_tasks = [getExchangeAndName(symbol) for symbol in symbols]
+    peers_tasks = [getPeers(symbol) for symbol in symbols]
+    industries, exchange_names, peers_list = await asyncio.gather(
+        asyncio.gather(*industry_tasks),
+        asyncio.gather(*exchange_name_tasks),
+        asyncio.gather(*peers_tasks)
+    )
+    for i, symbol in enumerate(symbols):
+        industry = industries[i]
+        exchange, name = exchange_names[i]
+        peers = peers_list[i]
+
         if industry not in recommendations:
             recommendations[industry] = []
-        recommendations[industry].append({"s": exchange+":"+symbol,
-                                          "d": name})
-        for peer in peers:
-            exchange, name = getExchangeAndName(peer)
-            recommendations[industry].append({"s": exchange+":"+peer,
-                                              "d": name})
+
+        recommendations[industry].append({"s": f"{exchange}:{symbol}", "d": name})
+
+        # Fetch peers' exchange and name concurrently
+        peer_tasks = [getExchangeAndName(peer) for peer in peers]
+        peer_exchange_names = await asyncio.gather(*peer_tasks)
+
+        for j, peer in enumerate(peers):
+            peer_exchange, peer_name = peer_exchange_names[j]
+            recommendations[industry].append({"s": f"{peer_exchange}:{peer}", "d": peer_name})
+
     # Converting to JSON array for React component
     recommendations = [
         {
@@ -64,10 +73,9 @@ def getRecommendations(symbols):
     ]
     return recommendations
 
-
 if __name__ == "__main__":
     #print(getPeers("AAPL"))
     # print(getExchangeAndName("AAPL"))
     #print(getIndustry("TECH"))
     # print(getInsiderTransactions("SLDB"))
-    print(getRecommendations(["AAPL"]))
+    print(asyncio.run(getRecommendations(["AAPL", "MSFT"])))

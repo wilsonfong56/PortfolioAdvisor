@@ -10,7 +10,7 @@ def getPeers():
     symbols = data.get("symbols")
     peers_dict = {}
     for symbol in symbols:
-        peers = helpers.getPeers(symbol)
+        peers = asyncio.run(helpers.getPeers(symbol))
         peers_dict[symbol] = peers
     return jsonify(peers=peers_dict)
 
@@ -20,7 +20,7 @@ def getIndustry():
     symbols = data.get("symbols")
     industry_dict = {}
     for symbol in symbols:
-        industry = helpers.getIndustry(symbol)
+        industry = asyncio.run(helpers.getIndustry(symbol))
         industry_dict[symbol] = industry
     return jsonify(industry=industry_dict)
 
@@ -30,7 +30,7 @@ def getInsiderTrans():
     symbols = data.get("symbols")
     trans_dict = {}
     for symbol in symbols:
-        transactions = helpers.getInsiderTransactions(symbol)
+        transactions = asyncio.run(helpers.getInsiderTransactions(symbol))
         trans_dict[symbol] = transactions
     return jsonify(transactions=trans_dict)
 
@@ -38,5 +38,5 @@ def getInsiderTrans():
 def getRecommendations():
     data = request.json
     symbols = data.get("symbols")
-    recommendations = helpers.getRecommendations(symbols)
+    recommendations = asyncio.run(helpers.getRecommendations(symbols))
     return jsonify(recommendations=recommendations)
