@@ -1,14 +1,16 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import AppHeader from "../components/AppHeader.js";
 import NewsWidget from "../components/NewsWidget.js";
 import {getStockNews} from "../api/api.js";
 import TaChart from "../components/tradingview/TaChart.js";
+import {PortfolioContext} from "../components/PortfolioContext.js";
 
 const ChartPage = () => {
     const [news, setNews] = useState([]);
+    const { portfolio } = useContext(PortfolioContext);
 
     useEffect(() => {
-        getStockNews("AAPL")
+        getStockNews("AAPL") //change to take Object.keys(portfolio)
             .then((res) => {
                 setNews(res.data.news);
             })

@@ -34,7 +34,7 @@ def getInsiderTrans():
         trans_dict[symbol] = transactions
     return jsonify(transactions=trans_dict)
 
-@holdings_routes.route('/getRecommendations', methods=['GET'])
+@holdings_routes.route('/getRecommendations', methods=['POST'])
 def getRecommendations():
     data = request.json
     symbols = data.get("symbols")

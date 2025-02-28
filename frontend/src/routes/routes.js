@@ -10,6 +10,7 @@ import ChartsPage from "../pages/ChartsPage.js";
 import MarketHealthPage from "../pages/MarketHealthPage.js";
 import AppHeader from "../components/AppHeader.js";
 import FeedbackPage from "../pages/FeedbackPage.js";
+import RecommendationPage from "../pages/RecommendationPage.js";
 
 const AppRoutes = () => {
     return (
@@ -27,6 +28,7 @@ const AppRoutes = () => {
                     <Route path="/app" element={<App />} />
                     <Route path="/chart" element={<ChartPage />} />
                     <Route path="/charts" element={<ChartsPage />} />
+                    <Route path="/recommendations" element={<RecommendationPage />} />
                 </Route>
 
                 <Route path="/login" element={<LoginPage />} />

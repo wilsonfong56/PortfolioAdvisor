@@ -51,6 +51,9 @@ function AppHeader() {
                                     <a href="/sentiment" className="block px-4 py-2 text-gray-600 hover:bg-indigo-100">
                                         Market Sentiment
                                     </a>
+                                    <a href="/recommendations" className="block px-4 py-2 text-gray-600 hover:bg-indigo-100">
+                                        Recommendations
+                                    </a>
                                     <button
                                         className="block w-full text-left px-4 py-2 text-gray-600 hover:bg-indigo-100"
                                         onClick={handleLogout}
