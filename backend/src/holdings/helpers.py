@@ -13,14 +13,8 @@ async def getIndustry(symbol):
     return await asyncio.to_thread(lambda: finnhub_client.company_profile2(symbol=symbol)["finnhubIndustry"])
 
 async def getExchangeAndName(symbol):
-    url = f"https://financialmodelingprep.com/api/v3/search?query={symbol}&apikey={os.getenv("FMP_API_KEY")}"
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url) as response:
-            if response.status == 200:
-                data = await response.json()
-                return data[0]["exchangeShortName"], data[0]["name"]
-            else:
-                return "Error", f"Error: {response.status}"
+    data = await asyncio.to_thread(lambda: (finnhub_client.company_profile2(symbol=symbol)))
+    return data['exchange'], data['name']
 
 async def getInsiderTransactions(symbol):
     transactions = await asyncio.to_thread(lambda: finnhub_client.stock_insider_transactions(symbol, "2025-01-01")["data"])
@@ -36,19 +30,36 @@ async def getInsiderTransactions(symbol):
     return cleaned_up_transactions
 
 async def getRecommendations(symbols):
-    recommendations = {}
+    print(f"Fetching recommendations for: {symbols}")
+
     industry_tasks = [getIndustry(symbol) for symbol in symbols]
     exchange_name_tasks = [getExchangeAndName(symbol) for symbol in symbols]
     peers_tasks = [getPeers(symbol) for symbol in symbols]
-    industries, exchange_names, peers_list = await asyncio.gather(
-        asyncio.gather(*industry_tasks),
-        asyncio.gather(*exchange_name_tasks),
-        asyncio.gather(*peers_tasks)
-    )
+
+    try:
+        industries, exchange_names, peers_list = await asyncio.gather(
+            asyncio.gather(*industry_tasks),
+            asyncio.gather(*exchange_name_tasks),
+            asyncio.gather(*peers_tasks)
+        )
+    except Exception as e:
+        print(f"Error during initial fetch: {e}")
+        return []
+
+    print(f"Industries: {industries}")
+    print(f"Exchange Names: {exchange_names}")
+    print(f"Peers List: {peers_list}")
+
+    recommendations = {}
+
     for i, symbol in enumerate(symbols):
         industry = industries[i]
         exchange, name = exchange_names[i]
-        peers = peers_list[i]
+        if "NASDAQ" in exchange:
+            exchange = "NASDAQ"
+        else:
+            exchange = "NYSE"
+        peers = [peer for peer in peers_list[i] if peer != symbol]
 
         if industry not in recommendations:
             recommendations[industry] = []
@@ -57,25 +68,29 @@ async def getRecommendations(symbols):
 
         # Fetch peers' exchange and name concurrently
         peer_tasks = [getExchangeAndName(peer) for peer in peers]
-        peer_exchange_names = await asyncio.gather(*peer_tasks)
+        try:
+            peer_exchange_names = await asyncio.gather(*peer_tasks)  # m calls
+        except Exception as e:
+            print(f"Error fetching peer data: {e}")
+            peer_exchange_names = [(None, None)] * len(peers)
 
         for j, peer in enumerate(peers):
             peer_exchange, peer_name = peer_exchange_names[j]
-            recommendations[industry].append({"s": f"{peer_exchange}:{peer}", "d": peer_name})
-
-    # Converting to JSON array for React component
-    recommendations = [
-        {
-            "title": industry,
-            "symbols": symbols
-        }
+            if peer_exchange and peer_name:
+                if "NASDAQ" in peer_exchange:
+                    peer_exchange = "NASDAQ"
+                else:
+                    peer_exchange = "NYSE"
+                recommendations[industry].append({"s": f"{peer_exchange}:{peer}", "d": peer_name})
+    return [
+        {"title": industry, "symbols": symbols}
         for industry, symbols in recommendations.items()
     ]
-    return recommendations
+
 
 if __name__ == "__main__":
     #print(getPeers("AAPL"))
-    # print(getExchangeAndName("AAPL"))
+    # print(asyncio.run(getExchangeAndName("WFC")))
     #print(getIndustry("TECH"))
     # print(getInsiderTransactions("SLDB"))
     print(asyncio.run(getRecommendations(["AAPL", "MSFT"])))

@@ -14,7 +14,7 @@ const RecommendationPage = () => {
         const symbols = portfolio.map(item => item.symbol)
         getRecommendations(symbols)
             .then((res) => {
-                setRecStocks(res.recommendations);
+                setRecStocks(res.data.recommendations);
                 console.log("Rec stocks: ", res)
                 setLoading(false)
             })
