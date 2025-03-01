@@ -12,7 +12,7 @@ const ChatInterface = ({ portfolio, currentPrices }) => {
     const [messages, setMessages] = useState([
         {
             text: "Hi! I'm your portfolio assistant. I can help you analyze your portfolio and answer questions about your investments.",
-            sender: 'bot',
+            sender: 'assistant',
         },
     ]);
     const [inputText, setInputText] = useState('');
@@ -73,35 +73,27 @@ const ChatInterface = ({ portfolio, currentPrices }) => {
             `
         };
 
-        const filteredMessages = messages
-            .filter(message => message.sender === 'user')
-            .map(message => ({
-                role: 'user',
-                content: message.text
-            }));
+        const formattedMessages = [
+            ...(messages.length === 0 ? [template] : []), // Add template only at start
+            ...messages.map(msg => ({
+                role: msg.sender === 'user' ? 'user' : 'assistant',
+                content: msg.text
+            })),
+            { role: "user", content: userMessage.text } // Add the current user message
+        ];
 
         try {
             const response = await openai.chat.completions.create({
                 model: "gpt-4",
-                stream: true,
-                messages: [template, ...filteredMessages]
-            }, { responseType: 'stream' });
+                messages: [template, ...formattedMessages]
+            });
 
-            let botMessage = '';
-            for await (const chunk of response.data) {
-                botMessage += chunk.choices[0]?.delta?.content || '';
-                setMessages(prev => {
-                    const lastMessage = prev[prev.length - 1];
-                    if (lastMessage.sender === 'bot') {
-                        return [...prev.slice(0, -1), { text: botMessage, sender: 'bot' }];
-                    } else {
-                        return [...prev, { text: botMessage, sender: 'bot' }];
-                    }
-                });
-            }
+            const botMessage = response.choices[0]?.message?.content;
+
+            setMessages(prev => [...prev, { text: botMessage, sender: 'assistant' }]);
         } catch (error) {
-            console.error('Error streaming response:', error);
-            setMessages(prev => [...prev, { text: "I'm currently down for maintenance, please check back later. Sorry for the inconvenience. :(" , sender: 'bot' }]);
+            console.error('Error fetching response:', error);
+            setMessages(prev => [...prev, { text: "I'm currently down for maintenance, please check back later. Sorry for the inconvenience. :(" , sender: 'assistant' }]);
         } finally {
             setIsLoading(false);
         }
