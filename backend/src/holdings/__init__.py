@@ -1,7 +1,6 @@
 from flask import Blueprint, request, jsonify
 from .helpers import *
 
-
 holdings_routes = Blueprint('holdings_routes', __name__)
 
 @holdings_routes.route('/getPeers', methods=['GET'])
@@ -45,6 +44,6 @@ def getRecommendations():
 def get_stock_news():
     data = request.args
     symbol = data.get("symbol")
-    news = getNews(symbol)
+    news = asyncio.run(getNews(symbol))
     response = jsonify(news=news)
     return response

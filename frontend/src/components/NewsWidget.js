@@ -19,21 +19,21 @@ const NewsWidget = ({ newsItems }) => {
                 <div className="space-y-6 h-[90%] overflow-y-auto">
                     {newsItems.map((item) => (
                         <div
-                            key={item.uuid}
+                            key={item.id}
                             className="border-b border-gray-200 last:border-0 pb-6 last:pb-0"
                         >
                             <a
-                                href={item.link}
+                                href={item.url}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="group block"
                             >
                                 <div className="flex gap-4">
-                                    {item.thumbnail && (
+                                    {item.image && (
                                         <div className="flex-shrink-0">
                                             <img
-                                                src={item.thumbnail.resolutions[1].url}
-                                                alt={item.title}
+                                                src={item.image.resolutions[1].url}
+                                                alt={item.headline}
                                                 className="w-32 h-24 object-cover rounded-lg"
                                             />
                                         </div>
@@ -41,20 +41,20 @@ const NewsWidget = ({ newsItems }) => {
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-start justify-between gap-4">
                                             <h3 className="font-semibold text-lg group-hover:text-blue-600 line-clamp-2">
-                                                {item.title}
+                                                {item.headline}
                                             </h3>
                                             <ExternalLink size={16} className="flex-shrink-0 mt-1 text-gray-400 group-hover:text-blue-600" />
                                         </div>
 
                                         <div className="flex flex-wrap items-center text-sm text-gray-500 mt-2 gap-x-4 gap-y-2">
-                                            <span className="font-medium">{item.publisher}</span>
+                                            <span className="font-medium">{item.source}</span>
                                             <div className="flex items-center space-x-1">
                                                 <Clock size={14} />
-                                                <span>{formatDate(item.providerPublishTime)}</span>
+                                                <span>{formatDate(item.datetime)}</span>
                                             </div>
-                                            {item.relatedTickers?.length > 0 && (
+                                            {item.related?.length > 0 && (
                                                 <div className="flex flex-wrap gap-2">
-                                                    {item.relatedTickers.map((ticker) => (
+                                                    {item.related.map((ticker) => (
                                                         <span
                                                             key={ticker}
                                                             className="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-xs"

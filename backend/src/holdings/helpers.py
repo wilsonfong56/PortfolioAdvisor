@@ -94,7 +94,7 @@ async def getNews(symbol):
     one_month_ago = datetime.now() - timedelta(days=30)
     from_date = one_month_ago.strftime('%Y-%m-%d')
     to_date = datetime.now().strftime('%Y-%m-%d')
-    return finnhub_client.company_news(symbol, _from=from_date, to=to_date)[:10]
+    return await asyncio.to_thread(lambda: finnhub_client.company_news(symbol, _from=from_date, to=to_date)[:10])
 
 if __name__ == "__main__":
     #print(getPeers("AAPL"))
