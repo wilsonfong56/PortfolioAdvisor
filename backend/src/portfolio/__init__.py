@@ -9,14 +9,6 @@ from ..shared import db
 
 portfolio_routes = Blueprint('portfolio_routes', __name__)
 
-@portfolio_routes.route('/news', methods=['GET'])
-def get_stock_news():
-    data = request.args
-    symbol = data.get("symbol")
-    news = yf.Ticker(symbol).news
-    response = jsonify(news=news)
-    return response
-
 @portfolio_routes.route('/portfolio', methods=['POST'])
 @jwt_required()
 def add_stock():

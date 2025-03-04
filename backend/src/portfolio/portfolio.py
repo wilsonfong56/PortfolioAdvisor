@@ -17,3 +17,4 @@ def add_stock_helper(email, symbol, shares, price):
         db.session.add(new_stock)
     db.session.commit()
     return
+

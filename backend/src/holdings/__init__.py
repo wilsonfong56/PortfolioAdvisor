@@ -40,3 +40,11 @@ def getRecommendations():
     symbols = data.get("symbols")
     recommendations = asyncio.run(helpers.getRecommendations(symbols))
     return jsonify(recommendations=recommendations)
+
+@holdings_routes.route('/news', methods=['GET'])
+def get_stock_news():
+    data = request.args
+    symbol = data.get("symbol")
+    news = getNews(symbol)
+    response = jsonify(news=news)
+    return response
