@@ -1,5 +1,4 @@
 from flask import jsonify, request
-import yfinance as yf
 from flask import Blueprint
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from .portfolio import add_stock_helper

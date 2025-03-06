@@ -24,14 +24,22 @@ export const deleteStock = (symbol, token) => API.delete('/portfolio', {
     }
 });
 export const getStockNews = (symbol) => API.get('/news', { params : { symbol: symbol }})
-export const handleChat = (payload) => API.post('/query', payload, {
-    headers: {
-        'Content-Type': 'application/json',
-    },
-});
+export const handleChat = (payload) => API.post('/query',
+    { payload },
+    {
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
 export const registerUser = (name, email, password) => API.post('/register', { name, email, password });
 export const loginUser = (email, password) => API.post('/login', { email, password });
-export const sendFeedback = (feedback) => API.post('/submitFeedback', { feedback });
+export const sendFeedback = (feedback, token) => API.post('/submitFeedback',
+    { feedback },
+    {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        }
+    });
 export const getPeers = (symbols) => API.get('/getPeers', { data: { symbols: symbols }})
 export const getIndustry = (symbols) => API.get('/getIndustry', { data: { symbols: symbols }})
 export const getInsiderTrans = (symbols) => API.get('/getInsiderTrans', { data: { symbols: symbols }})
