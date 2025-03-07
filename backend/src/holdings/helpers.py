@@ -1,4 +1,5 @@
 import os, finnhub
+
 from dotenv import load_dotenv
 import asyncio
 from datetime import datetime, timedelta
@@ -17,6 +18,7 @@ async def getExchangeAndName(symbol):
     return data['exchange'], data['name']
 
 async def getInsiderTransactions(symbol):
+    # Change _from parameter to get transactions in the past month
     transactions = await asyncio.to_thread(lambda: finnhub_client.stock_insider_transactions(symbol, "2025-01-01")["data"])
     cleaned_up_transactions = [
         {
@@ -59,7 +61,7 @@ async def getRecommendations(symbols):
             exchange = "NASDAQ"
         else:
             exchange = "NYSE"
-        peers = [peer for peer in peers_list[i] if peer != symbol]
+        peers = [peer for peer in peers_list[i] if peer != symbol and peer.isalpha()]
 
         if industry not in recommendations:
             recommendations[industry] = []

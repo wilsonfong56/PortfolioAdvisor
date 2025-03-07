@@ -15,6 +15,8 @@ from backend.models import User, Stock
 from dotenv import load_dotenv
 from flask_cors import CORS
 
+from backend.src.stripe import stripe_routes
+
 load_dotenv()
 
 async def scrape():
@@ -46,5 +48,6 @@ def create_app():
         app.register_blueprint(chat_routes)
         app.register_blueprint(feedback_routes)
         app.register_blueprint(holdings_routes)
+        app.register_blueprint(stripe_routes)
     scheduler.start()
     return app
