@@ -16,13 +16,23 @@ const LandingPage = () => {
                                 AI Stock Portfolio Management
                             </h1>
                             <p className="text-xl text-gray-600 mb-8">
-                                Make smarter investment decisions with real-time AI insights, market analysis, and institutional investor data.
+                                Make smarter investment decisions with real-time AI insights, market analysis, and
+                                institutional investor data.
                             </p>
                             <div className="flex space-x-4">
                                 <Link to="/signup">
-                                    <button className="px-6 py-3 rounded-lg bg-blue-600 text-white hover:bg-blue-700 flex items-center">
+                                    <button
+                                        className="px-6 py-3 rounded-lg bg-blue-600 text-white hover:bg-blue-700 flex items-center">
                                         Start Free Trial
-                                        <ChevronRight className="ml-2 h-5 w-5" />
+                                        <ChevronRight className="ml-2 h-5 w-5"/>
+                                    </button>
+                                </Link>
+                            </div>
+                            <div className="flex space-x-4 pt-5">
+                                <Link to="/checkout">
+                                    <button
+                                        className="px-6 py-3 rounded-lg bg-blue-600 text-white hover:bg-blue-700 flex items-center">
+                                        Purchase Premium
                                     </button>
                                 </Link>
                             </div>

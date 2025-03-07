@@ -15,7 +15,6 @@ const RecommendationPage = () => {
         getRecommendations(symbols)
             .then((res) => {
                 setRecStocks(res.data.recommendations);
-                console.log("Rec stocks: ", res)
                 setLoading(false)
             })
             .catch((err) => {
@@ -26,7 +25,7 @@ const RecommendationPage = () => {
     return (
         <>
             <AppHeader/>
-            <div className="pt-[100px]">
+            <div className="pt-[100px] max-w-[500px]">
                 {loading ? (
                     <p className="text-center text-lg font-semibold">Loading recommendations...</p>
                 ) : (

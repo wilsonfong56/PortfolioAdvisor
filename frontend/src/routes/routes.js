@@ -11,6 +11,7 @@ import MarketHealthPage from "../pages/MarketHealthPage.js";
 import AppHeader from "../components/AppHeader.js";
 import FeedbackPage from "../pages/FeedbackPage.js";
 import RecommendationPage from "../pages/RecommendationPage.js";
+import CheckoutPage from "../pages/CheckoutPage.js";
 
 const AppRoutes = () => {
     return (
@@ -36,6 +37,7 @@ const AppRoutes = () => {
                 <Route path="/maps" element={<HeatmapPage />} />
                 <Route path="/sentiment" element={<MarketHealthPage />} />
                 <Route path="/feedback" element={<FeedbackPage />} />
+                <Route path="/checkout" element={<CheckoutPage />} />
             </Routes>
         </BrowserRouter>
     )
