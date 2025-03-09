@@ -20,6 +20,12 @@ const LandingPage = () => {
                                 institutional investor data.
                             </p>
                             <div className="flex space-x-4">
+                                <Link to="/checkout">
+                                    <button
+                                        className="px-6 py-3 rounded-lg bg-white hover:bg-blue-50 text-blue-500 border-2 border-blue-500 flex items-center">
+                                        Purchase Premium
+                                    </button>
+                                </Link>
                                 <Link to="/signup">
                                     <button
                                         className="px-6 py-3 rounded-lg bg-blue-600 text-white hover:bg-blue-700 flex items-center">
@@ -28,14 +34,7 @@ const LandingPage = () => {
                                     </button>
                                 </Link>
                             </div>
-                            <div className="flex space-x-4 pt-5">
-                                <Link to="/checkout">
-                                    <button
-                                        className="px-6 py-3 rounded-lg bg-blue-600 text-white hover:bg-blue-700 flex items-center">
-                                        Purchase Premium
-                                    </button>
-                                </Link>
-                            </div>
+
                         </div>
                         <div className="relative">
                             <div className="bg-white rounded-xl shadow-lg p-6">
