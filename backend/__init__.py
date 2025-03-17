@@ -3,19 +3,18 @@ import os
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask
 from flask_jwt_extended import JWTManager
-from backend.src import loadDb
-from backend.src.feedback import feedback_routes
-from backend.src.holdings import holdings_routes
-from backend.src.loadDb import WebScraper
-from backend.src.shared import db, mail
-from backend.src.portfolio import portfolio_routes
-from backend.src.chat import chat_routes
-from backend.src.authentication import authentication_routes
-from backend.models import User, Stock
+from .src import loadDb
+from .src.feedback import feedback_routes
+from .src.holdings import holdings_routes
+from .src.loadDb import WebScraper
+from .src.shared import db, mail
+from .src.portfolio import portfolio_routes
+from .src.chat import chat_routes
+from .src.authentication import authentication_routes
+from .models import User, Stock
 from dotenv import load_dotenv
 from flask_cors import CORS
-
-from backend.src.stripe import stripe_routes
+from .src.stripe import stripe_routes
 
 load_dotenv()
 
