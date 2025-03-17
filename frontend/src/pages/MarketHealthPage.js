@@ -47,21 +47,35 @@ const MarketHealthPage = () => {
                 </div>
 
                 {/* Put/Call Ratio Section */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
                     <div className="bg-white rounded-lg shadow-lg p-6">
-                        <div className="h-[300px]">
+                        <div className="h-[400px]">
                             <PutCallRatio symbol="PCSP" />
                         </div>
                     </div>
                     <div className="bg-white rounded-lg shadow-lg p-6">
-                        <div className="h-[300px]">
+                        <div className="h-[400px]">
                             <PutCallRatio symbol="PCQQ" />
                         </div>
                     </div>
                     <div className="bg-white rounded-lg shadow-lg p-6">
-                        <div className="h-[300px]">
+                        <div className="h-[400px]">
                             <PutCallRatio symbol="PCIW" />
                         </div>
+                    </div>
+                </div>
+
+                {/* Put/Call Ratio Explanation */}
+                <div className="bg-blue-50 rounded-lg p-6 mb-6">
+                    <h3 className="text-lg font-semibold text-blue-900 mb-2">Understanding Put/Call Ratios</h3>
+                    <div className="text-blue-800 space-y-2">
+                        <p>The Put/Call Ratio is a technical indicator that helps measure market sentiment. Here's how to interpret it:</p>
+                        <ul className="list-disc pl-6">
+                            <li><span className="font-semibold">Above 1.0:</span> More puts than calls - indicates bearish sentiment (investors are buying more put options for protection)</li>
+                            <li><span className="font-semibold">Below 1.0:</span> More calls than puts - indicates bullish sentiment (investors are buying more call options for upside)</li>
+                            <li><span className="font-semibold">Extreme readings:</span> Values above 1.5 or below 0.5 often signal potential market reversals due to excessive sentiment</li>
+                        </ul>
+                        <p className="mt-2 text-sm italic">Note: PCSP = S&P 500 Put/Call Ratio, PCQQ = Nasdaq 100 Put/Call Ratio, PCIW = Russell 2000 Put/Call Ratio</p>
                     </div>
                 </div>
             </div>
