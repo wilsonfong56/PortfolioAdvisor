@@ -34,8 +34,18 @@ def delete_stock():
     data = request.json
     email = get_jwt_identity()
     symbol = data.get("symbol").upper()
+    shares_to_delete = float(data.get("shares"))
+    
     row = Stock.query.filter(and_(Stock.owner == email, Stock.symbol == symbol)).first()
-    db.session.delete(row)
+    
+    if not row:
+        return jsonify({"error": "Stock not found"}), 404
+        
+    if shares_to_delete >= row.shares:
+        db.session.delete(row)
+    else:
+        row.shares -= shares_to_delete
+        
     db.session.commit()
     portfolio = [stock.to_dict() for stock in Stock.query.filter(Stock.owner == email).all()]
-    return jsonify({"message": "Stock deleted successfully", "portfolio": portfolio})
+    return jsonify({"message": "Stock updated successfully", "portfolio": portfolio})

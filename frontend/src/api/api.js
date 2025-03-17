@@ -17,8 +17,8 @@ export const addStock = (stock, token) => API.post('/portfolio',
             Authorization: `Bearer ${token}`,
         }
     });
-export const deleteStock = (symbol, token) => API.delete('/portfolio', {
-    data: { symbol },
+export const deleteStock = (symbol, shares, token) => API.delete('/portfolio', {
+    data: { symbol, shares },
     headers: {
         Authorization: `Bearer ${token}`,
     }

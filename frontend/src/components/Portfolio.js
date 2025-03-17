@@ -8,7 +8,9 @@ const Portfolio = ({ portfolio, setPortfolio, currentPrices, setCurrentPrices })
     const [totalGainPercentages, setTotalGainPercentages] = useState({});
     const [dailyGainPercentages, setDailyGainPercentages] = useState({});
     const [dailyGains, setDailyGains] = useState({});
-
+    const [sellModalOpen, setSellModalOpen] = useState(false);
+    const [selectedStock, setSelectedStock] = useState(null);
+    const [sharesToSell, setSharesToSell] = useState('');
 
     useEffect(() => {
         const fetchGains = async () => {
@@ -54,10 +56,31 @@ const Portfolio = ({ portfolio, setPortfolio, currentPrices, setCurrentPrices })
         setStock({symbol: '', shares: '', price: ''});
     };
 
-    const handleDeleteStock = (symbol) => {
-        deleteStock(symbol, Cookies.get('access_token'))
-            .then((response) => setPortfolio(response.data.portfolio))
+    const handleDeleteStock = (symbol, sharesToDelete) => {
+        deleteStock(symbol.toUpperCase(), sharesToDelete, Cookies.get('access_token'))
+            .then((response) => {
+                setPortfolio(response.data.portfolio);
+                setSellModalOpen(false);
+                setSelectedStock(null);
+                setSharesToSell('');
+            })
             .catch((error) => console.log(error));
+    };
+
+    const openSellModal = (stock) => {
+        setSelectedStock(stock);
+        setSharesToSell('');
+        setSellModalOpen(true);
+    };
+
+    const handleSellSubmit = (e) => {
+        e.preventDefault();
+        const sharesToDelete = parseFloat(sharesToSell);
+        if (sharesToDelete <= 0 || sharesToDelete > selectedStock.shares) {
+            alert('Please enter a valid number of shares');
+            return;
+        }
+        handleDeleteStock(selectedStock.symbol, sharesToDelete);
     };
 
     const calculateTotal = (stock) => {
@@ -158,10 +181,10 @@ const Portfolio = ({ portfolio, setPortfolio, currentPrices, setCurrentPrices })
                                             </td>
                                             <td className="py-4">
                                                 <button
-                                                    onClick={() => handleDeleteStock(stock.symbol.toUpperCase())}
-                                                    className="h-8 w-8 flex items-center justify-center bg-red-500 hover:bg-red-600 text-white rounded-md transition-colors"
+                                                    onClick={() => openSellModal(stock)}
+                                                    className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded-md transition-colors text-sm"
                                                 >
-                                                    ×
+                                                    Sell
                                                 </button>
                                             </td>
                                         </tr>
@@ -173,6 +196,48 @@ const Portfolio = ({ portfolio, setPortfolio, currentPrices, setCurrentPrices })
                     }
                 </div>
             </div>
+
+            {/* Sell Modal */}
+            {sellModalOpen && selectedStock && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                    <div className="bg-white rounded-lg p-6 w-96">
+                        <h3 className="text-xl font-semibold mb-4">Sell {selectedStock.symbol}</h3>
+                        <form onSubmit={handleSellSubmit} className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Current Position: {selectedStock.shares} shares
+                                </label>
+                                <input
+                                    type="number"
+                                    value={sharesToSell}
+                                    onChange={(e) => setSharesToSell(e.target.value)}
+                                    placeholder="Number of shares to sell"
+                                    min="0.01"
+                                    max={selectedStock.shares}
+                                    step="0.01"
+                                    required
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                />
+                            </div>
+                            <div className="flex justify-end space-x-3">
+                                <button
+                                    type="button"
+                                    onClick={() => setSellModalOpen(false)}
+                                    className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+                                >
+                                    Sell
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }
