@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import OpenAI from "openai";
 import { handleChat } from "../api/api.js";
 
@@ -6,7 +6,7 @@ import { handleChat } from "../api/api.js";
 const openai = new OpenAI({
     apiKey: process.env.REACT_APP_OPENAI_API_KEY,
     dangerouslyAllowBrowser: true
-})
+});
 
 const ChatInterface = ({ portfolio, currentPrices }) => {
     const [messages, setMessages] = useState([
@@ -17,14 +17,16 @@ const ChatInterface = ({ portfolio, currentPrices }) => {
     ]);
     const [inputText, setInputText] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [currentStreamingMessage, setCurrentStreamingMessage] = useState('');
+    const messagesEndRef = useRef(null);
 
-    // const calculatePortfolioValue = () => {
-    //     return portfolio
-    //         .reduce((total, stock) => {
-    //             return total + parseFloat(stock.shares) * parseFloat(currentPrices[stock.symbol.toUpperCase()]);
-    //         }, 0)
-    //         .toFixed(2);
-    // };
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages, currentStreamingMessage]);
 
     const handleSendMessage = async (e) => {
         e.preventDefault();
@@ -34,6 +36,7 @@ const ChatInterface = ({ portfolio, currentPrices }) => {
         setMessages((prev) => [...prev, userMessage]);
         setIsLoading(true);
         setInputText('');
+        setCurrentStreamingMessage('');
         let docContext = "";
 
         // Create embedding for the user query
@@ -83,21 +86,28 @@ const ChatInterface = ({ portfolio, currentPrices }) => {
         ];
 
         try {
-            const response = await openai.chat.completions.create({
+            const stream = await openai.chat.completions.create({
                 model: "gpt-4",
-                messages: [template, ...formattedMessages]
+                messages: [template, ...formattedMessages],
+                stream: true,
             });
 
-            const botMessage = response.choices[0]?.message?.content;
+            let fullMessage = '';
+            for await (const chunk of stream) {
+                const content = chunk.choices[0]?.delta?.content || '';
+                fullMessage += content;
+                setCurrentStreamingMessage(fullMessage);
+            }
 
-            setMessages(prev => [...prev, { text: botMessage, sender: 'assistant' }]);
+            setMessages(prev => [...prev, { text: fullMessage, sender: 'assistant' }]);
+            setCurrentStreamingMessage('');
         } catch (error) {
             console.error('Error fetching response:', error);
-            setMessages(prev => [...prev, { text: "I'm currently down for maintenance, please check back later. Sorry for the inconvenience. :(" , sender: 'assistant' }]);
+            setMessages(prev => [...prev, { text: "I'm currently down for maintenance, please check back later. Sorry for the inconvenience. :(", sender: 'assistant' }]);
         } finally {
             setIsLoading(false);
         }
-    }
+    };
 
     function sanitizeHtml(input) {
         const allowedTags = ['strong', 'em', 'p', 'br']; // Customize allowed tags
@@ -135,13 +145,21 @@ const ChatInterface = ({ portfolio, currentPrices }) => {
                         </div>
                     </div>
                 ))}
-                {isLoading && (
+                {currentStreamingMessage && (
+                    <div className="flex justify-start">
+                        <div className="max-w-[80%] p-3 rounded-lg bg-gray-100 text-gray-800">
+                            {currentStreamingMessage}
+                        </div>
+                    </div>
+                )}
+                {isLoading && !currentStreamingMessage && (
                     <div className="flex justify-start">
                         <div className="bg-gray-100 text-gray-800 p-3 rounded-lg">
                             Thinking...
                         </div>
                     </div>
                 )}
+                <div ref={messagesEndRef} />
             </div>
 
             {/* Input Form */}
@@ -157,6 +175,7 @@ const ChatInterface = ({ portfolio, currentPrices }) => {
                     <button
                         type="submit"
                         className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+                        disabled={isLoading}
                     >
                         Send
                     </button>
