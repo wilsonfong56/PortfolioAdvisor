@@ -1,6 +1,7 @@
 # MarketMentor
 
 MarketMentor is a comprehensive market analysis and portfolio management platform that provides real-time market insights, sentiment analysis, and portfolio tracking capabilities.
+
 Demo: https://sheltered-beach-97367-47419915dd72.herokuapp.com/
 
 ## Features
