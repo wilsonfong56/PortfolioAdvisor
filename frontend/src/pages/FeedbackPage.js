@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {sendFeedback} from "../api/api.js";
+import Cookies from "js-cookie";
 
 const FeedbackPage = () => {
     const [feedback, setFeedback] = useState('');
@@ -8,13 +9,13 @@ const FeedbackPage = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const submitFeedback = async (feedbackData) => {
-        const response = await sendFeedback(feedbackData);
-
-        if (!response.ok) {
-            throw new Error('Failed to submit feedback');
+        try {
+            const response = await sendFeedback(feedbackData, Cookies.get('access_token'));
+            return response.data;
+        } catch (error) {
+            const errorMessage = error.response?.data?.error || 'Failed to submit feedback';
+            throw new Error(errorMessage);
         }
-
-        return await response.json();
     };
 
     const handleSubmit = async (e) => {
@@ -34,10 +35,12 @@ const FeedbackPage = () => {
 
     if (submitted) {
         return (
-            <div className="max-w-md mx-auto p-5 bg-white rounded-lg shadow-md">
-                <div className="text-center">
-                    <h3 className="text-lg font-semibold mb-2">Thank You!</h3>
-                    <p className="text-gray-600">Your feedback has been submitted successfully.</p>
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="max-w-md mx-auto p-5 bg-white rounded-lg shadow-md">
+                    <div className="text-center">
+                        <h3 className="text-lg font-semibold mb-2">Thank You!</h3>
+                        <p className="text-gray-600">Your feedback has been submitted successfully.</p>
+                    </div>
                 </div>
             </div>
         );

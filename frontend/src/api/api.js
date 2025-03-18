@@ -38,11 +38,9 @@ export const sendFeedback = (feedback, token) => API.post('/submitFeedback',
     {
         headers: {
             Authorization: `Bearer ${token}`,
-        }
+            'Content-Type': 'application/json',
+        },
     });
-export const getPeers = (symbols) => API.get('/getPeers', { data: { symbols: symbols }})
-export const getIndustry = (symbols) => API.get('/getIndustry', { data: { symbols: symbols }})
-export const getInsiderTrans = (symbols) => API.get('/getInsiderTrans', { data: { symbols: symbols }})
 export const getRecommendations = (symbols) => API.post('/getRecommendations', {
     headers: {
         'Content-Type': 'application/json',
