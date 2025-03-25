@@ -9,6 +9,8 @@ aiohttp==3.11.11
 # Database
 SQLAlchemy==2.0.37
 astrapy==1.5.2
+mysql-connector-python==9.1.0
+mysqlclient==2.2.7
 
 # API and Data Processing
 python-dotenv==1.0.0
